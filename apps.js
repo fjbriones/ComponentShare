@@ -36,10 +36,12 @@ app.post('/login', function (req, res) {
 		var sql_com_uname = "SELECT pword FROM usrlogin WHERE uname=?"
 		mysql_con.query(sql_com_uname, [req.body.username], function(err, result, fields){
 			if(err) throw err;
+			console.log(result[0])
+			console.log(req.body.password)
 			if (result[0] == req.body.password)
 				res.redirect('/home');
 			else
-				res.redirect('/login');
+				res.redirect('/');
 		})
 	})
 })
