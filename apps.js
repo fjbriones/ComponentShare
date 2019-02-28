@@ -44,13 +44,14 @@ app.post('/registered', function (req, res) {
 		var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 		var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
 		var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ? ?)";
+		var prof_id;
 		mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
 			if(err) throw err;
 			console.log("1 record inserted into usrprofiles");
 		});
 		mysql_con.query(sql_com_usrid, [req.body.email], function (err, result, fields){
 			if (err) throw err;
-			var prof_id = result[0].profile_id;
+			prof_id = result[0].profile_id;
 		})
 		mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err, result){
 			if(err) throw err;
