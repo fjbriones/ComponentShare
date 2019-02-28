@@ -27,28 +27,30 @@ app.use(bodyParser.json());
 // app.use(express.bodyParser());
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/html/login.html')
+	res.sendFile(__dirname + '/html/login.html');
 })
 app.post('/login', function (req, res) {
 	res.send('Log in')
 })
 
 app.get('/signup', function (req, res) {
-	res.sendFile(__dirname + '/html/signup.html')
+	res.sendFile(__dirname + '/html/signup.html');
 })
 
 app.post('/registered', function (req, res) {
 	mysql_con.connect(function(err){
 		if(err) throw err;
-		console.log(req);
 		var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 		var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword) VALUES (?, ?)";
 		mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
+			if(err) throw err;
 			console.log("1 record inserted");
 		});
 		mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password], function(err, result){
+			if(err) throw err;
 			console.log("1 record inserted");
 		});
+		res.sendFile(__dirname + '/html/login.html');
 	})
 })
 app.listen(port)
