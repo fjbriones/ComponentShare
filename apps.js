@@ -15,7 +15,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 var mysql_con = mysql.createConnection({
-	host: "10.158.3.101",
+	host: "localhost",
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
@@ -37,9 +37,10 @@ app.get('/signup', function (req, res) {
 	res.sendFile(__dirname + '/html/signup.html')
 })
 
-app.post('/signup', function (req, res) {
+app.post('/registered', function (req, res) {
 	mysql_con.connect(function(err){
 		if(err) throw err;
+		console.log(req.body);
 		var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 		var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword) VALUES (?, ?)";
 		con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
