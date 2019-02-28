@@ -38,7 +38,7 @@ app.post('/login', function (req, res) {
 			if(err) throw err;
 			console.log(result[0])
 			console.log(req.body.password)
-			if (result[0] == req.body.password)
+			if (result[0].pword == req.body.password)
 				res.redirect('/home');
 			else
 				res.redirect('/');
