@@ -50,7 +50,8 @@ app.post('/registered', function (req, res) {
 			if(err) throw err;
 			console.log("1 record inserted");
 		});
-		res.sendFile(__dirname + '/html/login.html');
+		// res.sendFile(__dirname + '/html/login.html');
+		res.redirect('/');
 	})
 })
 app.listen(port)
