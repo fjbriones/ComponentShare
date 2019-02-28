@@ -42,10 +42,10 @@ app.post('/registered', function (req, res) {
 		console.log(req.body);
 		var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 		var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword) VALUES (?, ?)";
-		con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
+		mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
 			console.log("1 record inserted");
 		});
-		con.query(sql_com_usrlog, [req.body.username, req.body.password], function(err, result){
+		mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password], function(err, result){
 			console.log("1 record inserted");
 		});
 	})
