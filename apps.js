@@ -48,16 +48,18 @@ app.post('/registered', function (req, res) {
 		mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
 			if(err) throw err;
 			console.log("1 record inserted into usrprofiles");
+			mysql_con.query(sql_com_usrid, ["'" + req.body.email + "'"], function (err, result, fields){
+				if (err) throw err;
+				prof_id = result[0].profile_id;
+				mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err, result){
+					if(err) throw err;
+					console.log("1 record inserted into usrlogin");
+				});
+			});
 		});
-		console.log(req.body.email);
-		mysql_con.query(sql_com_usrid, ["'" + req.body.email + "'"], function (err, result, fields){
-			if (err) throw err;
-			prof_id = result[0].profile_id;
-		})
-		mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err, result){
-			if(err) throw err;
-			console.log("1 record inserted into usrlogin");
-		});
+		// console.log(req.body.email);
+		
+		
 		// res.sendFile(__dirname + '/html/login.html');
 		res.redirect('/');
 	})
