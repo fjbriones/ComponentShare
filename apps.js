@@ -31,7 +31,21 @@ app.get('/', function(req, res) {
 })
 app.post('/login', function (req, res) {
 	// var sql_usrlog = 
-	res.send('Logged in')
+	mysql_con.connect(function(err){
+		if(err) throw err;
+		var sql_com_uname = "SELECT password FROM usrlogin WHERE username=?"
+		mysql_con.query(sql_com_uname, [req.body.username], function(err, result, fields){
+			if(err) throw err;
+			if (result[0] == req.body.password)
+				res.redirect('/home');
+			else
+				res.redirect('/login');
+		})
+	})
+})
+
+app.get('/home', function(req, res){
+	res.send('Home');
 })
 
 app.get('/signup', function (req, res) {
@@ -48,11 +62,8 @@ app.post('/registered', function (req, res) {
 		mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
 			if(err) throw err;
 			console.log("1 record inserted into usrprofiles");
-			console.log(result);
 			mysql_con.query(sql_com_usrid, [req.body.email], function (err2, result2, fields){
 				if (err) throw err;
-				console.log(result2);
-				console.log(result2[0]);
 				prof_id = result2[0].profile_id;
 				mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err3, result3){
 					if(err) throw err;
@@ -60,27 +71,8 @@ app.post('/registered', function (req, res) {
 				});
 			});
 		});
-		// console.log(req.body.email);
-		
-		
-		// res.sendFile(__dirname + '/html/login.html');
 		res.redirect('/');
 	})
 })
+
 app.listen(port)
-
-
-
-
-// http.createServer((req, res, next) => {
-	
-// 	var done = finalhandler(req, res);
-// 	serve(req, res, done);
-// 	// res.sendFile(__dirname + '/html/login.html');
-// 	fs.readFile(__dirname + '/html/login.html', function(err, data){
-// 		// res.statusCode = 200;
-// 		// res.setHeader('Content-Type', 'text/html');
-// 		res.write(data);
-// 		res.end()
-// 	});	
-// }).listen(3000);
