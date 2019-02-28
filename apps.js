@@ -50,6 +50,8 @@ app.post('/registered', function (req, res) {
 			console.log("1 record inserted into usrprofiles");
 			mysql_con.query(sql_com_usrid, ["'" + req.body.email + "'"], function (err, result, fields){
 				if (err) throw err;
+				console.log(result);
+				console.log(result[0]);
 				prof_id = result[0].profile_id;
 				mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err, result){
 					if(err) throw err;
