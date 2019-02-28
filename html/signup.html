@@ -15,31 +15,31 @@
 
 <div class="container">
     <section id="content">
-       <form action="/signup" method="post">
+       <form action="/registered" method="post" id="signupForm"/>
             <h1>Sign Up</h1>
             <div>
-                <input type="text" placeholder="First Name" required="" id="firstname" />
+                <input type="text" placeholder="First Name" required="" id="firstname" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Last Name" required="" id="lastname" />
+                <input type="text" placeholder="Last Name" required="" id="lastname" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Email" required="" id="email" />
+                <input type="text" placeholder="Email" required="" id="email" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Contact Number" required="" id="number" />
+                <input type="text" placeholder="Contact Number" required="" id="number" form="signupForm"/>
             </div>
            <div>
-                <input type="text" placeholder="Username" required="" id="username" />
+                <input type="text" placeholder="Username" required="" id="username" form="signupForm"/>
             </div>
             <div>
-                <input type="password" placeholder="Password" required="" id="password" />
+                <input type="password" placeholder="Password" required="" id="password" form="signupForm"/>
             </div>
             <div>
-                <input type="submit" value="Register" />
+                <input type="submit" value="Register" form="signupForm"/>
             </div>
         
-        </form> <!-- form -->
+        <!-- </form> form -->
     </section><!-- content -->
 </div><!-- container -->
 </body>

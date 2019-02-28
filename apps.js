@@ -19,7 +19,6 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	// _socket: '/var/run/mysqld/mysqld.sock',
 });
 
 app.use(express.static(__dirname + '/public'));
