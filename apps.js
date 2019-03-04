@@ -77,4 +77,12 @@ app.post('/registered', function (req, res) {
 	})
 })
 
+app.get('/addinv', function(req, res) {
+	res.sendFile(__dirname + '/html/addinv.html')
+})
+
+app.get('/addreq', function(req, res) {
+	res.sendFile(__dirname + '/html/addreq.html')
+})
+
 app.listen(port);
