@@ -50,7 +50,7 @@ app.post('/login', function (req, res) {
 })
 
 app.get('/home', function(req, res){
-	console.log("Homepage for ?", app.get("profile_id"))
+	console.log("Homepage for ", app.get("profile_id"))
 	res.sendFile(__dirname + '/html/home.html');
 })
 
@@ -87,6 +87,10 @@ app.get('/addinv', function(req, res) {
 
 app.get('/addreq', function(req, res) {
 	res.sendFile(__dirname + '/html/addreq.html')
+})
+
+app.post('/addreq', function(req, res) {
+	console.log(req.body)
 })
 
 app.listen(port);

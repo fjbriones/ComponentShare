@@ -15,28 +15,26 @@
 
 <div class="container">
     <section id="content">
-       <form action="home.html" method="post">
+       <form action="/addreq" method="post" id="addreqForm"/>
             <h1>Add Requests</h1>
             <div>
-                <input type="text" placeholder="Component Name" required="" id="componet" />
+                <input type="text" placeholder="Component Name" name="component" required="" id="component" form="addreqForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Quantity" required="" id="quantity" />
+                <input type="text" placeholder="Quantity" required="" name="quantity" id="quantity" form="addreqForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Voltage Rating" required="" id="rating" />
+                <input type="text" placeholder="Voltage Rating" required="" name="rating" id="rating" form="addreqForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Wattage" required="" id="wattage" />
+                <input type="text" placeholder="Wattage" required="" id="wattage" name="wattage" form="addreqForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Others" required="" id="others" />
+                <input type="text" placeholder="Others" required="" name="others" id="others" form="addreqForm"/>
             </div>
             <div>
-                <input type="submit" value="Request" />
+                <input type="submit" value="Request" form="addreqForm"/>
             </div>
-        
-        </form> <!-- form -->
     </section><!-- content -->
 </div><!-- container -->
 </body>
