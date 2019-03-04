@@ -44,13 +44,11 @@ app.post('/login', function (req, res) {
 		if (result[0].pword == req.body.password)
 		{
 			res.redirect('/home');
-			app.set('profile_id', result[0].profile_id)
-			mysql_con.end();
+			app.set('profile_id', result[0].profile_id);
 		}
 		else
 		{
 			res.redirect('/');
-			mysql_con.end();
 		}
 		// })
 	})
@@ -81,7 +79,6 @@ app.post('/registered', function (req, res) {
 			mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err3, result3){
 				if(err) throw err;
 				console.log("1 record inserted into usrlogin");
-				mysql_con.end();
 			});
 		});
 	});
