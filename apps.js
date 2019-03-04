@@ -90,7 +90,15 @@ app.get('/addreq', function(req, res) {
 })
 
 app.post('/addreq', function(req, res) {
-	console.log(req.body)
+	mysql_con.connect(function(err){
+		if(err) throw err;
+		var sql_com_addreq = "INSERT INTO request (r_quantity, r_item, r_remarks, profile_id) VALUES (?, ?, ?, ?)";
+		mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.others, app.get('profile_id')], function(err, result){
+			if(err) throw err;
+			console.log("1 record inserted into request for ", app.get("profile_id"));
+			res.redirect('/home')
+		}) 
+	})
 })
 
 app.listen(port);
