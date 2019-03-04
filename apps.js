@@ -55,6 +55,25 @@ app.post('/login', function (req, res) {
 })
 
 app.get('/home', function(req, res){
+	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id=?";
+	var sql_com_request = "SELECT * FROM request WHERE profile_id=?";
+	var inventory;
+	var request;
+	mysql_con.query(sql_com_inventory, [app.get("profile_id")], function(err, result, fields){
+		if (err) throw err;
+		console.log(result);
+		inventory = result;
+		mysql_con.query(sql_com_request, [app.get("profile_id")], function(err2, result2, fields2){
+			if (err) throw err;
+			console.log(result2);
+			request = result2;
+			res.render('/html/home', {
+				inventory: inventory,
+				request: request
+			});
+		})
+	})
+
 	console.log("Homepage for ", app.get("profile_id"))
 	res.sendFile(__dirname + '/html/home.html');
 })
@@ -97,8 +116,8 @@ app.get('/addreq', function(req, res) {
 app.post('/addreq', function(req, res) {
 	// mysql_con.connect(function(err){
 	// 	if(err) throw err;
-	var sql_com_addreq = "INSERT INTO request (r_quantity, r_item, r_remarks, profile_id) VALUES (?, ?, ?, ?)";
-	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.others, app.get('profile_id')], function(err, result){
+	var sql_com_addreq = "INSERT INTO request (r_quantity, r_item, r_voltage, r_wattage, r_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
+	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, app.get('profile_id')], function(err, result){
 		if(err) throw err;
 		console.log("1 record inserted into request for ", app.get("profile_id"));
 		res.redirect('/home')
@@ -108,8 +127,8 @@ app.post('/addreq', function(req, res) {
 app.post('/addinv', function(req, res) {
 	// mysql_con.connect(function(err){
 	// 	if(err) throw err;
-	var sql_com_addreq = "INSERT INTO inventory (i_quantity, i_item, i_remarks, profile_id) VALUES (?, ?, ?, ?)";
-	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.others, app.get('profile_id')], function(err, result){
+	var sql_com_addreq = "INSERT INTO inventory (i_quantity, i_item, i_voltage, i_wattage, i_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
+	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, app.get('profile_id')], function(err, result){
 		if(err) throw err;
 		console.log("1 record inserted into inventory for ", app.get("profile_id"));
 		res.redirect('/home')
