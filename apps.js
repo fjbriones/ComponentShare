@@ -60,13 +60,25 @@ app.get('/home', function(req, res){
 	var inventory;
 	var request;
 	mysql_con.query(sql_com_inventory, [app.get("profile_id")], function(err, result, fields){
-		if (err) throw err;
-		console.log(result);
-		inventory = result;
+		if (err)
+		{
+			inventory = [];
+		}
+		else
+		{
+			console.log(result);
+			inventory = result;
+		}
 		mysql_con.query(sql_com_request, [app.get("profile_id")], function(err2, result2, fields2){
-			if (err) throw err;
-			console.log(result2);
-			request = result2;
+			if (err) 
+			{
+				request = [];
+			}
+			else
+			{
+				console.log(result2);
+				request = result2;
+			}
 			res.render('/html/home', {
 				inventory: inventory,
 				request: request
