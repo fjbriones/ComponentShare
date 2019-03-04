@@ -76,4 +76,4 @@ app.post('/registered', function (req, res) {
 	})
 })
 
-app.listen(port)
+app.listen(port);
