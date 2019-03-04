@@ -48,6 +48,7 @@ app.post('/login', function (req, res) {
 
 app.get('/home', function(req, res){
 	res.sendFile(__dirname + '/html/home.html');
+})
 
 app.get('/signup', function (req, res) {
 	res.sendFile(__dirname + '/html/signup.html');
