@@ -33,13 +33,16 @@ app.post('/login', function (req, res) {
 	// var sql_usrlog = 
 	mysql_con.connect(function(err){
 		if(err) throw err;
-		var sql_com_uname = "SELECT pword FROM usrlogin WHERE uname=?"
+		var sql_com_uname = "SELECT pword, profile_id FROM usrlogin WHERE uname=?"
 		mysql_con.query(sql_com_uname, [req.body.username], function(err, result, fields){
 			if(err) throw err;
 			console.log(result[0])
 			console.log(req.body.password)
 			if (result[0].pword == req.body.password)
+			{
 				res.redirect('/home');
+				app.set('profile_id', result[0].profile_id)
+			}
 			else
 				res.redirect('/');
 		})
@@ -47,6 +50,7 @@ app.post('/login', function (req, res) {
 })
 
 app.get('/home', function(req, res){
+	console.log("Homepage for ?", app.get("profile_id"))
 	res.sendFile(__dirname + '/html/home.html');
 })
 
