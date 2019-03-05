@@ -87,8 +87,8 @@ app.get('/home', function(req, res){
 		})
 	})
 
-	console.log("Homepage for ", app.get("profile_id"))
-	res.sendFile(__dirname + '/html/home.html');
+	// console.log("Homepage for ", app.get("profile_id"))
+	// res.sendFile(__dirname + '/html/home.html');
 })
 
 app.get('/signup', function (req, res) {
