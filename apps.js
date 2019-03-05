@@ -44,14 +44,20 @@ app.post('/login', function (req, res) {
 		if(err) throw err;
 		console.log(result[0])
 		console.log(req.body.password)
-		if (result[0].pword == req.body.password)
-		{
-			res.redirect('/home');
-			app.set('profile_id', result[0].profile_id);
+		if(isEmpty(result)){
+			res.redirect('/')
 		}
 		else
 		{
-			res.redirect('/');
+			if (result[0].pword == req.body.password)
+			{
+				res.redirect('/home');
+				app.set('profile_id', result[0].profile_id);
+			}
+			else
+			{
+				res.redirect('/');
+			}
 		}
 		// })
 	})
