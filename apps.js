@@ -44,7 +44,7 @@ app.post('/login', function (req, res) {
 		if(err) throw err;
 		console.log(result[0])
 		console.log(req.body.password)
-		if(isEmpty(result)){
+		if(result.length == 0){
 			res.redirect('/')
 		}
 		else
