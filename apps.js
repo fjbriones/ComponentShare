@@ -21,6 +21,10 @@ var mysql_con = mysql.createConnection({
 	database: "userdb",
 });
 
+mysql_con.connect(function(err){
+		if(err) throw err;
+});
+
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
@@ -29,11 +33,8 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/html/login.html');
-	mysql_con.end();
-	mysql_con.connect(function(err){
-		if(err) throw err;
-	})
 })
+
 app.post('/login', function (req, res) {
 	// var sql_usrlog = 
 	// mysql_con.connect(function(err){
