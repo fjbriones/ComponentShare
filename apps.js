@@ -29,6 +29,7 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/html/login.html');
+	mysql_con.end();
 	mysql_con.connect(function(err){
 		if(err) throw err;
 	})
