@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser')
-var email_validator = require('email-validator')
+var validator = require('validator')
 // var path = require('path');
 // var finalhandler = require('finalhandler');
 // var serveStatic = require('serve-static');
@@ -30,16 +30,12 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
-// app.use(express.bodyParser());
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/html/login.html');
 })
 
 app.post('/login', function (req, res) {
-	// var sql_usrlog = 
-	// mysql_con.connect(function(err){
-	// 	if(err) throw err;
 	var sql_com_uname = "SELECT pword, profile_id FROM usrlogin WHERE uname=?"
 	mysql_con.query(sql_com_uname, [req.body.username], function(err, result, fields){
 		if(err) throw err;
@@ -60,7 +56,6 @@ app.post('/login', function (req, res) {
 				res.redirect('/');
 			}
 		}
-		// })
 	})
 })
 
@@ -95,9 +90,6 @@ app.get('/home', function(req, res){
 			});
 		})
 	})
-
-	// console.log("Homepage for ", app.get("profile_id"))
-	// res.sendFile(__dirname + '/html/home.html');
 })
 
 app.get('/signup', function (req, res) {
@@ -105,15 +97,18 @@ app.get('/signup', function (req, res) {
 })
 
 app.post('/registered', function (req, res) {
-	// mysql_con.connect(function(err){
-	// 	if(err) throw err;
 	var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 	var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
 	var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ?, ?)";
 	var prof_id;
 
 	//Check if email is valid
-	if(!email_validator.validate(req.body.email))
+	if(!validator.isEmail(req.body.email))
+	{
+		res.redirect('/signup')
+	}
+
+	if(!validator.isMobilePhone(req.body.number))
 	{
 		res.redirect('/signup')
 	}
