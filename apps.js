@@ -109,10 +109,12 @@ app.post('/registered', function (req, res) {
 	var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ?, ?)";
 	var prof_id;
 	if(!validator.isEmail(req.body.email)){
+		console.log('Email is invalid')
 		res.redirect('/signup')
 	}
 	else{
 		if(!validator.isMobilePhone(req.body.number)){
+			console.log('Mobile number is invalid')
 			res.redirect('/signup')
 		}
 		else{
@@ -133,6 +135,7 @@ app.post('/registered', function (req, res) {
 					res.redirect('/');
 				}
 				else{
+					console.log('Username already taken')
 					res.redirect('/signup')
 				}
 			})
