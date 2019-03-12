@@ -4,6 +4,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser')
+var email_validator = require('email-validator')
 // var path = require('path');
 // var finalhandler = require('finalhandler');
 // var serveStatic = require('serve-static');
@@ -110,6 +111,13 @@ app.post('/registered', function (req, res) {
 	var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
 	var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ?, ?)";
 	var prof_id;
+
+	//Check if email is valid
+	if(!email_validator.validate(req.body.email))
+	{
+		res.redirect('/signup')
+	}
+
 	mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
 		if(err) throw err;
 		console.log("1 record inserted into usrprofiles");
