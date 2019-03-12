@@ -5,6 +5,7 @@ var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser')
 var validator = require('validator')
+var promise = require('promise')
 // var path = require('path');
 // var finalhandler = require('finalhandler');
 // var serveStatic = require('serve-static');
@@ -96,36 +97,47 @@ app.get('/signup', function (req, res) {
 	res.sendFile(__dirname + '/html/signup.html');
 })
 
+
+function signupRederict(error) {
+	res.redirect('/signup')
+}
+
 app.post('/registered', function (req, res) {
 	var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 	var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
+	var sql_com_usrnm = "SELECT * FROM usrlogin where uname=?";
 	var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ?, ?)";
 	var prof_id;
-
-	//Check if email is valid
-	if(!validator.isEmail(req.body.email))
-	{
+	if(!validator.isEmail(req.body.email)){
 		res.redirect('/signup')
 	}
-
-	if(!validator.isMobilePhone(req.body.number))
-	{
-		res.redirect('/signup')
+	else{
+		if(!validator.isMobilePhone(req.body.number)){
+			res.redirect('/signup')
+		}
+		else{
+			mysql_con.query(sql_com_usrnm,[req.body.username], function(err0, result0, fields0){
+				if(result0.length == 0){
+					mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
+						if(err) throw err;
+						console.log("1 record inserted into usrprofiles");
+						mysql_con.query(sql_com_usrid, [req.body.email], function (err2, result2, fields){
+							if (err) throw err;
+							prof_id = result2[0].profile_id;
+							mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err3, result3){
+								if(err) throw err;
+								console.log("1 record inserted into usrlogin");
+							});
+						});
+					});
+					res.redirect('/');
+				}
+				else{
+					res.redirect('/signup')
+				}
+			})
+		}
 	}
-
-	mysql_con.query(sql_com_usrprof,[req.body.firstname, req.body.lastname, req.body.email, req.body.number], function(err, result){
-		if(err) throw err;
-		console.log("1 record inserted into usrprofiles");
-		mysql_con.query(sql_com_usrid, [req.body.email], function (err2, result2, fields){
-			if (err) throw err;
-			prof_id = result2[0].profile_id;
-			mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err3, result3){
-				if(err) throw err;
-				console.log("1 record inserted into usrlogin");
-			});
-		});
-	});
-	res.redirect('/');
 })
 // })
 
