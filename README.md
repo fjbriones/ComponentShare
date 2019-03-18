@@ -1,2 +1,2 @@
 # ComponentShare
-This is the repository for CoE 133 project, Component Share.
+This is the repository for CoE 134 project, Component Share.
