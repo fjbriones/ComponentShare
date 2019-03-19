@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+
+<body>
+
+<h6 align="right"> Hi, Username 
+  <button id="logout">Logout</button>
+</h6>
+
+<% include ../partials/side %>
+
+<div class="row">
+<div class="container">
+    <div class="column">
+    <div class="card">
+      <h3>Inventory</h3>
+      <br>
+      <div class="card2">
+      <a href="/addinv">+Add Inventory</a>
+      </div>
+        <div>
+          <ul>
+            <% inventory.forEach(function(inv) { %>
+              <form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"/>
+              <input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
+              <li><%= inv.i_quantity %> - <%= inv.i_item %><span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span></li>
+            <% }); %>
+          </ul>
+        </div>
+    </div>
+  </div>
+</div><!-- container -->
+
+<div class="container">
+    <div class="column">
+    <div class="card">
+      <h3>Requests</h3>
+      <br> 
+      <div class="card2">
+      <a href="/addreq">+ Add Requests</a>
+      </div>
+        <div>
+          <ul>
+            <% request.forEach(function(req) { %>
+              <form id="request<%= req.req_id %>" method="post" action="/deleterequest"/>
+              <input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
+              <li><%= req.r_quantity %> - <%= req.r_item %><span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span></li>
+            <% }); %>
+          </ul>
+        </div>
+    </div>
+  </div>
+</div><!-- container -->
+
+<div class="container">
+    <div class="column">
+    <div class="card">
+      <h3>General Feed</h3>
+      <br>
+       <div>
+          <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+            <li>7</li>
+            <li>8</li>
+            <li>9</li>
+            <li>10</li>
+          </ul>
+        </div>
+    </div>
+  </div>
+</div><!-- container -->
+</div>
+
+</body>
+</html>
