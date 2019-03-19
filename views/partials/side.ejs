@@ -1,0 +1,19 @@
+<div id="mySidepanel" class="sidepanel">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+  <a href="#">Username</a>
+  <a href="#">Person A</a>
+  <a href="#">Person B</a>
+  <a href="#">Person C</a>
+</div>
+
+<button class="openbtn" onclick="openNav()">☰</button>  
+
+<script>
+function openNav() {
+  document.getElementById("mySidepanel").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidepanel").style.width = "0";
+}
+</script>
