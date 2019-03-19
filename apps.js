@@ -1,18 +1,11 @@
 var http = require('http');
-// var fs = require('fs');
 var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser')
 var validator = require('validator')
 var promise = require('promise')
-// var path = require('path');
-// var finalhandler = require('finalhandler');
-// var serveStatic = require('serve-static');
 
-// var serve = serveStatic('html/static');
-
-//IP 10.158.3.101
 const hostname = '127.0.0.1';
 const port = 3000;
 
@@ -90,6 +83,21 @@ app.get('/home', function(req, res){
 				request: request
 			});
 		})
+	})
+})
+
+app.post('/deleterequest', function(req, res){
+	var sql_com_delreq = "DELETE * FROM request where req_id=?";
+	mysql_con.query(sql_com_delreq, [req.body.req_id], function(err, result){
+		if (err)
+		{
+			res.send("Unable to delete " + req.body.req_id);
+		}
+		else
+		{
+			res.send("Deleted " + req.body.req_id);
+			res.redirect('/home')
+		}
 	})
 })
 

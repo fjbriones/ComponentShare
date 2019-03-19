@@ -52,7 +52,9 @@
         <div>
           <ul>
             <% request.forEach(function(req) { %>
-              <li><%= req.r_quantity %> - <%= req.r_item %></li>
+              <form id="request<%= req.req_id %>" method="post" action="/deleterequest"/>
+              <input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>"/>
+              <li><%= req.r_quantity %> - <%= req.r_item %><span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span></li>
             <% }); %>
           </ul>
         </div>
