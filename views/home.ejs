@@ -33,7 +33,9 @@
         <div>
           <ul>
             <% inventory.forEach(function(inv) { %>
-              <li><%= inv.i_quantity %> - <%= inv.i_item %></li>
+              <form id="request<%= req.inv_id %>" method="post" action="/deleteinventory"/>
+              <input type="hidden" id="inv_id" name="inv_id" value="<%= req.inv_id %>" form="request<%= req.inv_id %>"/>
+              <li><%= inv.i_quantity %> - <%= inv.i_item %><span class="close" onClick="request<%= req.inv_id %>.submit()">&times;</span></li>
             <% }); %>
           </ul>
         </div>

@@ -97,11 +97,27 @@ app.post('/deleterequest', function(req, res){
 		}
 		else
 		{
-			res.send("Deleted " + req.body.req_id);
 			res.redirect('/home')
 		}
 	})
 })
+
+app.post('/deleteinventory', function(req, res){
+	var sql_com_delinv = "DELETE FROM inventory where inv_id=?";
+	console.log(req.body)
+	mysql_con.query(sql_com_delinv, [parseInt(req.body.inv_id, 10)], function(err, result){
+		if (err)
+		{
+			res.send("Unable to delete " + req.body.inv_id);
+			console.log(err);
+		}
+		else
+		{
+			res.redirect('/home')
+		}
+	})
+})
+
 
 app.get('/signup', function (req, res) {
 	res.sendFile(__dirname + '/html/signup.html');
