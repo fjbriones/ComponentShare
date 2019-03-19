@@ -92,6 +92,7 @@ app.post('/deleterequest', function(req, res){
 		if (err)
 		{
 			res.send("Unable to delete " + req.body.req_id);
+			console.log(err);
 		}
 		else
 		{
