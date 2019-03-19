@@ -88,6 +88,7 @@ app.get('/home', function(req, res){
 
 app.post('/deleterequest', function(req, res){
 	var sql_com_delreq = "DELETE * FROM request where req_id=?";
+	console.log(req.body)
 	mysql_con.query(sql_com_delreq, [req.body.req_id], function(err, result){
 		if (err)
 		{
