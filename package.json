@@ -1,0 +1,14 @@
+{
+	"name": "ComponentShare",
+	"version": "0.1",
+	"description": "Project Requirement for CoE 134 - Computer Systems Engineering",
+	"dependencies": {
+		"express": "latest",
+		"mysql": "latest",
+		"body-parser": "latest",
+		"validator": "latest",
+		"promise": "latest",
+		"express-session": "latest",
+		"req-flash": "latest"
+	}
+}
