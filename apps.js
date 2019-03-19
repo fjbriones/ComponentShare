@@ -1,3 +1,4 @@
+
 var http = require('http');
 var express = require('express');
 var app = express();
@@ -5,6 +6,8 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser')
 var validator = require('validator')
 var promise = require('promise')
+var session = require('express-session')
+
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -19,10 +22,17 @@ var mysql_con = mysql.createConnection({
 mysql_con.connect(function(err){
 		if(err) throw err;
 });
-
+global.db = mysql_con;
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+app.use(session({
+	secret: 'big bad wolf',
+	resave: false,
+	saveUninitialized:true,
+	cookie: {maxAge: 60000}
+}))
+
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
@@ -30,32 +40,27 @@ app.get('/', function(req, res) {
 })
 
 app.post('/login', function (req, res) {
-	var sql_com_uname = "SELECT pword, profile_id FROM usrlogin WHERE uname=?"
-	mysql_con.query(sql_com_uname, [req.body.username], function(err, result, fields){
-		if(err) throw err;
-		console.log(result[0])
-		console.log(req.body.password)
-		if(result.length == 0){
-			res.redirect('/')
+	var sess = req.session;
+	var sql_com = "SELECT profile_id, uname FROM usrlogin WHERE uname='"+req.body.username+"' and pword ='"+req.body.password+"'"; 
+	db.query(sql_com, function(err, result){
+		if(result.length){
+			req.session.userId = result[0].profile_id;
+			req.session.user = result[0];
+			console.log(result[0].profile_id);
+			res.redirect('/home')
 		}
 		else
 		{
-			if (result[0].pword == req.body.password)
-			{
-				res.redirect('/home');
-				app.set('profile_id', result[0].profile_id);
-			}
-			else
-			{
-				res.redirect('/');
-			}
+			message = 'Incorrect username or password!';
+			res.redirect('/');
 		}
 	})
 })
 
 app.get('/home', function(req, res){
-	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id=?";
-	var sql_com_request = "SELECT * FROM request WHERE profile_id=?";
+	var userId = req.session.userId;
+	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
+	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
 	var inventory;
 	var request;
 	mysql_con.query(sql_com_inventory, [app.get("profile_id")], function(err, result, fields){
