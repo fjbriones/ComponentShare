@@ -131,7 +131,7 @@ app.get('/signup', function (req, res) {
 
 
 function signupRederict(error) {
-	res.redirect('/signup')
+	res.redirect('pages/signup')
 }
 
 app.post('/registered', function (req, res) {
