@@ -62,31 +62,54 @@ app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
+	var sql_com_inventory_all = "SELECT * FROM inventory";
+	var sql_com_request_all = "SELECT * FROM request";
+
 	var inventory;
 	var request;
-	mysql_con.query(sql_com_inventory, [app.get("profile_id")], function(err, result, fields){
+	var inventory_all;
+	var request_all;
+	mysql_con.query(sql_com_inventory, function(err, result, fields){
 		if (err)
 		{
 			inventory = [];
 		}
 		else
 		{
-			console.log(result);
 			inventory = result;
 		}
-		mysql_con.query(sql_com_request, [app.get("profile_id")], function(err2, result2, fields2){
+		mysql_con.query(sql_com_request, function(err2, result2, fields2){
 			if (err) 
 			{
 				request = [];
 			}
 			else
 			{
-				console.log(result2);
 				request = result2;
 			}
-			res.render('pages/home', {
-				inventory: inventory,
-				request: request
+			mysql_con.query(sql_com_inventory_all, function(err3, result3, fields3){
+				if (err)
+				{
+					inventory_all = [];
+				}
+				else
+				{
+					inventory_all = result3;
+				}
+				mysql_con.query(sql_com_request, function(err4, result4, fields4){
+					if (err) 
+					{
+						request_all = [];
+					}
+					else
+					{
+						request_all = result4;
+					}
+					res.render('pages/home', {
+						inventory: inventory,
+						request: request,
+						inventory_all: inventory_all,
+						request_all: request_all
 			});
 		})
 	})
