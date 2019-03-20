@@ -36,7 +36,8 @@ app.use(session({
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/html/login.html');
+	// res.sendFile(__dirname + '/html/login.html');
+	res.render('pages/login')
 })
 
 app.post('/login', function (req, res) {
@@ -83,7 +84,7 @@ app.get('/home', function(req, res){
 				console.log(result2);
 				request = result2;
 			}
-			res.render('home', {
+			res.render('pages/home', {
 				inventory: inventory,
 				request: request
 			});
@@ -125,7 +126,7 @@ app.post('/deleteinventory', function(req, res){
 
 
 app.get('/signup', function (req, res) {
-	res.sendFile(__dirname + '/html/signup.html');
+	res.render('pages/signup')
 })
 
 
@@ -176,11 +177,13 @@ app.post('/registered', function (req, res) {
 // })
 
 app.get('/addinv', function(req, res) {
-	res.sendFile(__dirname + '/html/addinv.html')
+	// res.sendFile(__dirname + '/html/addinv.html')
+	res.render('pages/addinv')
 })
 
 app.get('/addreq', function(req, res) {
-	res.sendFile(__dirname + '/html/addreq.html')
+	// res.sendFile(__dirname + '/html/addreq.html')
+	res.render('pages/addreq')
 })
 
 app.post('/addreq', function(req, res) {
