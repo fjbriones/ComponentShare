@@ -129,11 +129,6 @@ app.get('/signup', function (req, res) {
 	res.render('pages/signup')
 })
 
-
-function signupRederict(error) {
-	res.redirect('pages/signup')
-}
-
 app.post('/registered', function (req, res) {
 	var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 	var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
