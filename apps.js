@@ -110,7 +110,9 @@ app.get('/home', function(req, res){
 						request: request,
 						inventory_all: inventory_all,
 						request_all: request_all
-			});
+					})
+				})
+			})
 		})
 	})
 })
