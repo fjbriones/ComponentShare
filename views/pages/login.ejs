@@ -10,20 +10,19 @@
 
 <div class="container">
     <section id="content">
-       <form action="/home">
+       <form action="/login" method="post" id="loginForm"/>
             <h1>Log In</h1>
             <div>
-                <input type="text" placeholder="Username" required="" id="username" />
+                <input type="text" placeholder="Username" name="username" required="" id="username" form="loginForm"/>
             </div>
             <div>
-                <input type="password" placeholder="Password" required="" id="password" />
+                <input type="password" placeholder="Password" name="password" required="" id="password" form="loginForm"/>
             </div>
            
             <div>
-                <input type="submit" value="Log in" />
+                <input type="submit" value="Log in" form="loginForm"/>
                 <a href="/signup">No account yet? Register Here</a>
             </div>
-        
         </form> <!-- form -->
     </section><!-- content -->
 </div><!-- container -->

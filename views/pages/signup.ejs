@@ -10,30 +10,29 @@
 
 <div class="container">
     <section id="content">
-       <form action="/home">
+       <form action="/registered" method="post" id="signupForm"/>
             <h1>Sign Up</h1>
             <div>
-                <input type="text" placeholder="First Name" required="" id="firstname" />
+                <input type="text" placeholder="First Name" name="firstname" required="" id="firstname" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Last Name" required="" id="lastname" />
+                <input type="text" placeholder="Last Name" name="lastname" required="" id="lastname" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Email" required="" id="email" />
+                <input type="text" placeholder="Email" name="email" required="" id="email" form="signupForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Contact Number" required="" id="number" />
+                <input type="text" placeholder="Contact Number" name="number" required="" id="number" form="signupForm"/>
             </div>
            <div>
-                <input type="text" placeholder="Username" required="" id="username" />
+                <input type="text" placeholder="Username" name="username" required="" id="username" form="signupForm"/>
             </div>
             <div>
-                <input type="password" placeholder="Password" required="" id="password" />
+                <input type="password" placeholder="Password" name="password" required="" id="password" form="signupForm"/>
             </div>
             <div>
-                <input type="submit" value="Register" />
+                <input type="submit" value="Register" form="signupForm"/>
             </div>
-        
         </form> <!-- form -->
     </section><!-- content -->
 </div><!-- container -->

@@ -10,27 +10,26 @@
 
 <div class="container">
     <section id="content">
-       <form action="/home">
+       <<form action="/addinv" method="post" id="addinvForm"/>
             <h1>Add Inventory</h1>
             <div>
-                <input type="text" placeholder="Component Name" required="" id="componet" />
+                <input type="text" placeholder="Component Name" required="" name="component" id="component" form="addinvForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Quantity" required="" id="quantity" />
+                <input type="text" placeholder="Quantity" required="" name="quantity" id="quantity" form="addinvForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Voltage Rating" required="" id="rating" />
+                <input type="text" placeholder="Voltage Rating" required="" name="voltage" id="voltage" form="addinvForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Wattage" required="" id="wattage" />
+                <input type="text" placeholder="Wattage" required="" name="wattage" id="wattage" form="addinvForm"/>
             </div>
             <div>
-                <input type="text" placeholder="Others" required="" id="others" />
+                <input type="text" placeholder="Others" required="" name="others" id="others" form="addinvForm"/>
             </div>
             <div>
-                <input type="submit" value="Add" />
+                <input type="submit" value="Add" form="addinvForm"/>
             </div>
-        
         </form> <!-- form -->
     </section><!-- content -->
 </div><!-- container -->
