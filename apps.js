@@ -38,6 +38,7 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
 	// res.sendFile(__dirname + '/html/login.html');
+	prompt = "";
 	res.render('pages/login')
 })
 
@@ -186,6 +187,7 @@ app.post('/registered', function (req, res) {
 							mysql_con.query(sql_com_usrlog, [req.body.username, req.body.password, prof_id], function(err3, result3){
 								if(err) throw err;
 								console.log("1 record inserted into usrlogin");
+								prompt = "";
 							});
 						});
 					});
