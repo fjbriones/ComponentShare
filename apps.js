@@ -11,6 +11,7 @@ var session = require('express-session')
 
 const hostname = '127.0.0.1';
 const port = 3000;
+var prompt = "";
 
 var mysql_con = mysql.createConnection({
 	host: "localhost",
@@ -151,7 +152,9 @@ app.post('/deleteinventory', function(req, res){
 
 
 app.get('/signup', function (req, res) {
-	res.render('pages/signup')
+	res.render('pages/signup', {
+		prompt : prompt
+	})
 })
 
 app.post('/registered', function (req, res) {
@@ -161,12 +164,14 @@ app.post('/registered', function (req, res) {
 	var sql_com_usrlog = "INSERT INTO usrlogin (uname, pword, profile_id) VALUES (?, ?, ?)";
 	var prof_id;
 	if(!validator.isEmail(req.body.email)){
-		console.log('Email is invalid')
+		prompt = 'Email is invalid'
+		console.log(prompt)
 		res.redirect('/signup')
 	}
 	else{
 		if(!validator.isMobilePhone(req.body.number)){
-			console.log('Mobile number is invalid')
+			prompt = 'Mobile number is invalid'
+			console.log(prompt)
 			res.redirect('/signup')
 		}
 		else{
@@ -187,7 +192,8 @@ app.post('/registered', function (req, res) {
 					res.redirect('/');
 				}
 				else{
-					console.log('Username already taken')
+					prompt = "Username already taken"
+					console.log(prompt)
 					res.redirect('/signup')
 				}
 			})
@@ -213,7 +219,7 @@ app.post('/addreq', function(req, res) {
 	var sql_com_addreq = "INSERT INTO request (r_quantity, r_item, r_voltage, r_wattage, r_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
 	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, userId], function(err, result){
 		if(err) throw err;
-		console.log("1 record inserted into request for ", app.get("profile_id"));
+		console.log("1 record inserted into request for ", userId);
 		res.redirect('/home')
 	}) 
 })
@@ -225,7 +231,7 @@ app.post('/addinv', function(req, res) {
 	var sql_com_addreq = "INSERT INTO inventory (i_quantity, i_item, i_voltage, i_wattage, i_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
 	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, userId], function(err, result){
 		if(err) throw err;
-		console.log("1 record inserted into inventory for ", app.get("profile_id"));
+		console.log("1 record inserted into inventory for ", userId);
 		res.redirect('/home')
 	}) 
 })
