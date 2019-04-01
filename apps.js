@@ -21,6 +21,8 @@ var mysql_con = mysql.createConnection({
 
 mysql_con.connect(function(err){
 	if(err) throw err;
+	
+	console.log('Looking for table usrprofiles.');
 
 	let createUsrprofiles = "CREATE TABLE IF NOT EXISTS usrprofiles(profile_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,fname varchar(40) NOT NULL, lname varchar(40) NOT NULL, email varchar(40), contactnum bigint(20))";
 	mysql_con.query(createUsrprofiles, function(err, results, fields){
@@ -29,6 +31,7 @@ mysql_con.connect(function(err){
 		}
 	});
 	
+        console.log('Looking for table usrlogin');
 	let createUsrlogin = "CREATE TABLE IF NOT EXISTS usrlogin(user_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,uname varchar(20) NOT NULL, pword varchar(20) NOT NULL, profile_id INT NOT NULL,FOREIGN KEY fk_usrlogin(profile_id) REFERENCES usrprofiles(profile_id))";
 	mysql_con.query(createUsrlogin, function(err, results, fields){
 		if(err){
@@ -36,19 +39,22 @@ mysql_con.connect(function(err){
 		} 
 	});
 
-	
+	 console.log('Looking for table inventory.');
 	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),	i_remarks text)";
 	mysql_con.query(createInventory, function(err, results, fields){
 		if(err){
 			console.log(err.message);
 		}
 	});
+        console.log('Looking for table request.');
 	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
 	 mysql_con.query(createRequest, function(err, results, fields){
                 if(err){
                         console.log(err.message);
                 }
         });
+	
+	console.log('Application running at 10.158.3.101:3000');
 });
 global.db = mysql_con;
 
