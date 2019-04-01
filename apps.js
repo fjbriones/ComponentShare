@@ -20,19 +20,49 @@ var mysql_con = mysql.createConnection({
 });
 
 mysql_con.connect(function(err){
-		if(err) throw err;
+	if(err) throw err;
+
+	let createUsrprofiles = "CREATE TABLE IF NOT EXISTS usrprofiles(profile_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,fname varchar(40) NOT NULL, lname varchar(40) NOT NULL, email varchar(40), contactnum bigint(20))";
+	mysql_con.query(createUsrprofiles, function(err, results, fields){
+		if(err){
+			console.log(err.message);
+		}
+	});
+	
+	let createUsrlogin = "CREATE TABLE IF NOT EXISTS usrlogin(user_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,uname varchar(20) NOT NULL, pword varchar(20) NOT NULL, profile_id INT NOT NULL,FOREIGN KEY fk_usrlogin(profile_id) REFERENCES usrprofiles(profile_id))";
+	mysql_con.query(createUsrlogin, function(err, results, fields){
+		if(err){
+			console.log(err.message);
+		} 
+	});
+
+	
+	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),	i_remarks text)";
+	mysql_con.query(createInventory, function(err, results, fields){
+		if(err){
+			console.log(err.message);
+		}
+	});
+	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
+	 mysql_con.query(createRequest, function(err, results, fields){
+                if(err){
+                        console.log(err.message);
+                }
+        });
 });
 global.db = mysql_con;
+
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 app.use(session({
+	key: 'user_sid',
 	secret: 'big bad wolf',
 	resave: false,
 	saveUninitialized:true,
 	cookie: {maxAge: 60000}
 }))
-
+	
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
@@ -45,8 +75,8 @@ app.post('/login', function (req, res) {
 	var sql_com = "SELECT profile_id, uname FROM usrlogin WHERE uname='"+req.body.username+"' and pword ='"+req.body.password+"'"; 
 	db.query(sql_com, function(err, result){
 		if(result.length){
-			req.session.userId = result[0].profile_id;
-			req.session.user = result[0];
+			sess.userId = result[0].profile_id;
+			sess.user = result[0];
 			console.log(result[0].profile_id);
 			res.redirect('/home')
 		}
@@ -116,7 +146,17 @@ app.get('/home', function(req, res){
 		})
 	})
 })
-
+app.post('/logout', function(req, res){
+	var sess = req.session;
+	console.log('User logged out');
+	sess.destroy();
+	if(sess.user && sess.user_sid){
+		res.clearCookie('user_sid');
+		res.redirect('/');
+	}else{
+		re.redirect('/login');
+	}
+}); 
 app.post('/deleterequest', function(req, res){
 	var sql_com_delreq = "DELETE FROM request where req_id=?";
 	console.log(req.body)
@@ -132,7 +172,6 @@ app.post('/deleterequest', function(req, res){
 		}
 	})
 })
-
 app.post('/deleteinventory', function(req, res){
 	var sql_com_delinv = "DELETE FROM inventory where inv_id=?";
 	console.log(req.body)
