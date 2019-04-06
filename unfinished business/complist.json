@@ -1,0 +1,6 @@
+{
+	"Components":
+	[
+		"Resistors", "Capacitors", "Diodes", "Transistors", "IC", "LED", "Miscellaneous"
+	]
+}
