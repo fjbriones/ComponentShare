@@ -1,12 +1,23 @@
 var http = require('http');
 var express = require('express');
-var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser')
 var validator = require('validator')
 var promise = require('promise')
 var session = require('express-session')
 var fs = require('fs')
+var nodemailer = require('nodemailer');
+
+var app = express();
+
+var transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: 'componentshare@gmail.com',
+		pass: '134compshare'
+	}
+})
+
 var components;
 
 const hostname = '127.0.0.1';
@@ -268,6 +279,41 @@ app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
 
+function mailMatched(prof_id, item_id, table) {
+	var idKey;
+
+	if (table=='request') {
+		idKey = 'req_id';
+	}
+	else {
+		idKey = 'inv_id';
+	}
+
+	var sql_com_item_desc = 'SELECT * FROM ' + table + ' WHERE ' + idKey + ' = ' + item_id;
+	var sql_com_prof = 'SELECT * FROM usrprofiles';
+	var email;
+
+	db.query(sql_com_prof, function(err, result) {
+		if (err) throw err;
+		email = result[0].email;
+		db.query(sql_com_item_desc, function(err2, result2) {
+			if (err2) throw err2;
+			var mailOptions = {
+				from : 'componentshare@gmail.com',
+				to : email,
+				subject : 'Item matched from ' + table,
+				text: result2[0].item + result2[0].remarks
+			}
+			transporter.sendMail(mailOptions, function(err3, info) {
+				if (err3) throw err3;
+				console.log('Email sent: ' + info.response)
+			})
+		})
+	})
+	
+
+}
+
 //The precious matching algorithm, ahahahahahaha so fun
 function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? ORDER BY timestamp ASC';
@@ -301,7 +347,9 @@ function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 
 				db.query(sql_com_match_insert, sql_com_match_values, function(err2, result2) {
 					if (err) throw err;
-					console.log("1 record inserted into matches")
+					console.log("1 record inserted into matches");
+					mailMatched(req_prof_id, req_id, "request");
+					mailMatched(inv_prof_id, inv_id, "inventory");
 				})
 			}
 		}
