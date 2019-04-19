@@ -127,6 +127,25 @@ app.post('/login', function (req, res) {
 	})
 })
 
+function readRemarks(database) {
+	var data = JSON.parse(JSON.stringify(database))
+	data.forEach(function(value, index) {
+
+		var remarks = JSON.parse(value.remarks)
+		var remarksKeys = Object.keys(remarks)
+		var newRemarks = [];
+		
+		remarksKeys.forEach(function(value2, index2) {
+			// if (index2 > 0)
+			// 	newRemarks += "\n"
+			newRemarks.push(value2 + ": " + remarks[value2])
+		})
+		data[index].remarks = newRemarks
+		// console.log(data[index].remarks)
+	})
+	return data
+}
+
 app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var username = req.session.username;
@@ -158,6 +177,9 @@ app.get('/home', function(req, res){
 				else {
 					feed = result3;
 				}
+				inventory = readRemarks(inventory)
+				request = readRemarks(request)
+				feed = readRemarks(feed)
 				res.render('pages/home', {
 					username: username,
 					inventory: inventory,
@@ -179,7 +201,8 @@ app.get('/logout', function(req, res){
 	else{
 		res.redirect('/');
 	}
-}); 
+});
+
 app.post('/deleterequest', function(req, res){
 	var sql_com_delreq = "DELETE FROM request where req_id=?";
 	console.log(req.body)
@@ -279,6 +302,7 @@ app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
 
+//Sending mail notification
 function mailMatched(prof_id, item_id, table) {
 	var idKey;
 
@@ -357,12 +381,11 @@ function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 }
 
 function insertComponent(req, table, otherTable, userId){
-	// var userId = req.session.userId;
-	// console.log(userId)
 	var quantity;
 	var number;
 	var compType;
 	var compDesc;
+
 	for (description in req.body){
 		desc = description.slice(0, description.length-1)
 		if (desc == 'Quan'){
