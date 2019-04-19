@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+
+<body>
+
+<h6 align="right"> Hi, Username 
+  <button id="logout">Logout</button>
+</h6>
+
+<% include ../partials/side %>
+
+<div class="container">
+<div class="chat-peer">
+  <img src="../patials/sherlock.jpg" alt="Avatar">
+  <p>Hello. Pwede na po ba ito?</p>
+  <span class="time-right">1:40</span>
+</div>
+
+<div class="chat">
+  <img src="../partials/images.png" alt="Avatar" class="right">
+  <p>Hi! Paano ba pinapagana 'to?</p>
+  <span class="time-left">2:03</span>
+</div>
+
+<div class="chat-peer">
+  <img src="../patials/sherlock.jpg" alt="Avatar">
+  <p>Di ko rin po alam...</p>
+  <span class="time-right">2:05</span>
+</div>
+
+<div class="chat">
+  <img src="../partials/images.png" alt="Avatar" class="right">
+  <p>Oh no...</p>
+  <span class="time-left">2:17</span>
+</div> 
+
+<div class="form-chat" id="myForm">
+  <form action="/chat">
+    <textarea placeholder="Type message.." name="msg" required></textarea>
+    <button type="submit" class="btn">Send</button>
+  </form>
+</div>
+</div>
+
+</body>
+</html>

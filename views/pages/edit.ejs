@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+
+<body>
+
+<h6 align="right"> Hi, Username 
+  <button id="logout">Logout</button>
+</h6>
+
+<% include ../partials/side %>
+
+<div class="container">
+    <section id="content">
+       <form action="/profile" method="post" id="updateForm"/>
+            <h1>Edit Profile</h1>
+            <div>
+                <img src="../partials/images.png" width="200" height="200">
+            </div>
+            <div>
+                <input type="file" name="pic" accept="image/*" id="pic" form="updateForm" />
+            </div>
+            <div>
+                <input type="text" placeholder="First Name" name="firstname" required="" id="firstname" form="updateForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Last Name" name="lastname" required="" id="lastname" form="updateForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Email" name="email" required="" id="email" form="updateForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Contact Number" name="number" required="" id="number" form="updateForm"/>
+            </div>
+           <div>
+                <input type="text" placeholder="Username" name="username" required="" id="username" form="updateForm"/>
+            </div>
+            <div>
+                <input type="password" placeholder="Password" name="password" required="" id="password" form="updateForm"/>
+            </div>
+            <div>
+                <input type="submit" value="Update" form="updateForm"/>
+            </div>
+            <div> <%= prompt %>  </div>
+        <!-- </form> form -->
+    </section><!-- content -->
+</div><!-- container -->
+</body>
+</html>
