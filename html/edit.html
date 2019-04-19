@@ -1,0 +1,78 @@
+<!-- https://speckyboy.com/login-pages-html5-css/ -->
+<!-- 3. Pure HTML5 -->
+
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6 ielt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7 ielt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Component Share - Edit Profile</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+
+ <h6 align="right"> Hi, Username 
+ <button id="logout">Logout</button>
+ </h6>
+
+
+<div id="mySidepanel" class="sidepanel">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+  <img src="images.png" alt="Avatar" width="50" height="50">
+  <a href="profile.html">Username</a>
+  <a href="chat.html">Person A</a>
+  <a href="chat.html">Person B</a>
+  <a href="chat.html">Person C</a>
+</div>
+<button class="openbtn" onclick="openNav()">☰</button>  
+
+<div class="container">
+    <section id="content">
+       <form action="profile.html">
+            <h1>Edit Profile</h1>
+            <div>
+                <img src="images.png" width="200" height="200">
+            </div>
+            <div>
+                <input type="file" name="pic" accept="image/*" id="pic" />
+            </div>
+            <div>
+                <input type="text" placeholder="First Name" required="" id="firstname" />
+            </div>
+            <div>
+                <input type="text" placeholder="Last Name" required="" id="lastname" />
+            </div>
+            <div>
+                <input type="text" placeholder="Email" required="" id="email" />
+            </div>
+            <div>
+                <input type="text" placeholder="Contact Number" required="" id="number" />
+            </div>
+           <div>
+                <input type="text" placeholder="Username" required="" id="username" />
+            </div>
+            <div>
+                <input type="password" placeholder="Password" required="" id="password" />
+            </div>
+            <div>
+                <input type="submit" value="Update" />
+            </div>
+        
+        </form> <!-- form -->
+    </section><!-- content -->
+</div><!-- container -->
+
+<script>
+function openNav() {
+  document.getElementById("mySidepanel").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidepanel").style.width = "0";
+}
+</script>
+
+</body>
+</html>

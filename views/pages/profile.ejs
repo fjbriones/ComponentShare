@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+
+<body>
+
+<h6 align="right"> Hi, Username 
+  <button id="logout">Logout</button>
+</h6>
+
+<% include ../partials/side %>
+
+<br> </br>
+
+<div class="container">
+    <section id="content">
+       <form action="/edit">
+            <h1>User Name</h1>
+            <div>
+                <img src="../partials/images.png" width="200" height="200">
+            </div>
+            <div id ="fullname" class="card2">
+                <%= fullname %>
+            </div>
+            <div id="email" class="card2">
+                <%= email %>
+            </div>
+            <div id="number" class="card2">
+                <%= number %>
+            </div>
+           
+            <div>
+                <input type="submit" value="Edit Profile" />
+            </div>
+        
+        </form> <!-- form -->
+    </section><!-- content -->
+</div><!-- container -->
+
+</body>
+</html>
+

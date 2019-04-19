@@ -321,7 +321,7 @@ form:after {
   width: 0;
   position: fixed;
   z-index: 1;
-  height: 250px;
+  height: 500px;
   top: 0;
   left: 0;
   background-color: #111;
@@ -620,7 +620,12 @@ ul li:hover {
   color: #999;
 } 
 
+
+
 /* end of chat containers */
+
+
+
 
 
 /*
