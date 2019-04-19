@@ -26,9 +26,11 @@
         <div>
           <ul>
             <% inventory.forEach(function(inv) { %>
-              <form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"/>
+              <div>
+                <form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
+              </div>
               <input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
-              <li><%= inv.i_quantity %> - <%= inv.i_item %><span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span></li>
+              <li><%= inv.quantity %> - <%= inv.item %><span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span></li>
             <% }); %>
           </ul>
         </div>
@@ -47,9 +49,11 @@
         <div>
           <ul>
             <% request.forEach(function(req) { %>
-              <form id="request<%= req.req_id %>" method="post" action="/deleterequest"/>
+              <div>
+                <form id="request<%= req.req_id %>" method="post" action="/deleterequest"></form>
+              </div>
               <input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
-              <li><%= req.r_quantity %> - <%= req.r_item %><span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span></li>
+              <li><%= req.quantity %> - <%= req.item %><span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span></li>
             <% }); %>
           </ul>
         </div>
@@ -64,11 +68,8 @@
       <br>
        <div>
           <ul>
-            <% inventory_all.forEach(function(inv) { %>
-              <li>I - <%= inv.i_quantity %> - <%= inv.i_item %></li>
-            <% }); %>
-            <% request_all.forEach(function(req) { %>
-              <li>R - <%= req.r_quantity %> - <%= req.r_item %></li>
+            <% feed.forEach(function(item) { %>
+              <li> <%= item.quantity %> - <%= item.item %></li>
             <% }); %>
           </ul>
         </div>

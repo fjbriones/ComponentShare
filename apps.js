@@ -1,4 +1,3 @@
-
 var http = require('http');
 var express = require('express');
 var app = express();
@@ -7,7 +6,8 @@ var bodyParser = require('body-parser')
 var validator = require('validator')
 var promise = require('promise')
 var session = require('express-session')
-
+var fs = require('fs')
+var components;
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -19,6 +19,13 @@ var mysql_con = mysql.createConnection({
 	password: "134compshare",
 	database: "userdb",
 });
+
+fs.readFile(__dirname + '/public/js/components.json', function(err, data){
+	if (err) throw err;
+
+	components = JSON.parse(data);
+	// console.log(components)
+})
 
 mysql_con.connect(function(err){
 	if(err) throw err;
@@ -41,14 +48,16 @@ mysql_con.connect(function(err){
 	});
 
 	 console.log('Looking for table inventory.');
-	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),	i_remarks text)";
+	// let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),i_remarks text)";
+	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text)";
 	mysql_con.query(createInventory, function(err, results, fields){
 		if(err){
 			console.log(err.message);
 		}
 	});
         console.log('Looking for table request.');
-	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
+	// let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
+	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text, batchname varchar(50))";
 	 mysql_con.query(createRequest, function(err, results, fields){
                 if(err){
                         console.log(err.message);
@@ -73,7 +82,6 @@ app.use(session({
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-	// res.sendFile(__dirname + '/html/login.html');
 	prompt = "";
 	res.render('pages/login')
 })
@@ -100,13 +108,11 @@ app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
-	var sql_com_inventory_all = "SELECT * FROM inventory";
-	var sql_com_request_all = "SELECT * FROM request";
+	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
 
 	var inventory;
 	var request;
-	var inventory_all;
-	var request_all;
+	var feed;
 	mysql_con.query(sql_com_inventory, function(err, result, fields){
 		if (err)
 		{
@@ -125,30 +131,19 @@ app.get('/home', function(req, res){
 			{
 				request = result2;
 			}
-			mysql_con.query(sql_com_inventory_all, function(err3, result3, fields3){
+			mysql_con.query(sql_com_feed, function(err3, result3, fields3){
 				if (err)
 				{
-					inventory_all = [];
+					feed = [];
 				}
 				else
 				{
-					inventory_all = result3;
+					feed = result3;
 				}
-				mysql_con.query(sql_com_request, function(err4, result4, fields4){
-					if (err) 
-					{
-						request_all = [];
-					}
-					else
-					{
-						request_all = result4;
-					}
-					res.render('pages/home', {
-						inventory: inventory,
-						request: request,
-						inventory_all: inventory_all,
-						request_all: request_all
-					})
+				res.render('pages/home', {
+					inventory: inventory,
+					request: request,
+					feed: feed
 				})
 			})
 		})
@@ -176,6 +171,7 @@ app.post('/deleterequest', function(req, res){
 		}
 		else
 		{
+			console.log(req.body.req_id + ' deleted from request')
 			res.redirect('/home')
 		}
 	})
@@ -191,6 +187,7 @@ app.post('/deleteinventory', function(req, res){
 		}
 		else
 		{
+			console.log(req.body.inv_id + ' deleted from inventory')
 			res.redirect('/home')
 		}
 	})
@@ -250,38 +247,72 @@ app.post('/registered', function (req, res) {
 // })
 
 app.get('/addinv', function(req, res) {
-	// res.sendFile(__dirname + '/html/addinv.html')
-	res.render('pages/addinv')
+	res.render('pages/addinv');
 })
 
 app.get('/addreq', function(req, res) {
-	// res.sendFile(__dirname + '/html/addreq.html')
-	res.render('pages/addreq')
+	res.render('pages/addreq');
 })
 
+function insertComponent(req, table, userId){
+	// var userId = req.session.userId;
+	console.log(userId)
+	var quantity;
+	var number;
+	var compType;
+	var compDesc;
+	for (description in req.body){
+		desc = description.slice(0, description.length-1)
+		if (desc == 'Quan'){
+			compDesc = "";
+			quantity = req.body[description];
+			number = description[description.length-1];
+		}
+		else if(desc == "compType"){
+			compType = req.body[description]
+			var compDescList = Object.keys(components[compType])
+
+
+			compDesc = '{'
+			compDescList.forEach(function(value, index) {
+				if (index > 0)
+					compDesc += ','
+				compDesc += ' "' + value + '" : "' + req.body[value + number] + '"'
+			})
+			compDesc += ' }'
+
+			var sql_com_addcomp;
+			var sql_com_values;
+
+			if (table =='request'){
+				batchName = req.body["batchName"]
+				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id, batchname) VALUES (?, ?, ?, ?, ?)";
+				sql_com_values = [quantity, compType, compDesc, userId, batchName]
+			}
+			else{
+				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id) VALUES (?, ?, ?, ?)";
+				sql_com_values = [quantity, compType, compDesc, userId]
+			}
+						 
+			mysql_con.query(sql_com_addcomp, sql_com_values, function(err, result){
+				if (err) throw err;
+				log = "1 record inserted into " + table + " for " + userId;
+				console.log(log);
+			})
+		}
+	}
+}
+
 app.post('/addreq', function(req, res) {
-	// mysql_con.connect(function(err){
-	// 	if(err) throw err;
 	var userId = req.session.userId;
-	var sql_com_addreq = "INSERT INTO request (r_quantity, r_item, r_voltage, r_wattage, r_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
-	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, userId], function(err, result){
-		if(err) throw err;
-		console.log("1 record inserted into request for ", userId);
-		res.redirect('/home')
-	}) 
+	insertComponent(req, "request", userId)
+	res.redirect('/home')
 })
 
 app.post('/addinv', function(req, res) {
-	// mysql_con.connect(function(err){
-	// 	if(err) throw err;
 	var userId = req.session.userId;
-	var sql_com_addreq = "INSERT INTO inventory (i_quantity, i_item, i_voltage, i_wattage, i_remarks, profile_id) VALUES (?, ?, ?, ?, ?, ?)";
-	mysql_con.query(sql_com_addreq, [req.body.quantity, req.body.component, req.body.voltage, req.body.wattage, req.body.others, userId], function(err, result){
-		if(err) throw err;
-		console.log("1 record inserted into inventory for ", userId);
-		res.redirect('/home')
-	}) 
+	insertComponent(req, "inventory", userId)
+	res.redirect('/home') 
 })
-// })
 
 app.listen(port);

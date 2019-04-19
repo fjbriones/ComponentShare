@@ -2,35 +2,30 @@
 <html lang="en">
 
 <head>
-  <% include ../partials/head %>
+    <% include ../partials/head %>
 </head>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/addcomp.js" type="text/javascript"></script>
 
 <body>
-
-<div class="container">
-    <section id="content">
-       <form action="/addreq" method="post" id="addreqForm"/>
-            <h1>Add Requests</h1>
-            <div>
-                <input type="text" placeholder="Component Name" name="component" required="" id="component" form="addreqForm"/>
-            </div>
-            <div>
-                <input type="text" placeholder="Quantity" required="" name="quantity" id="quantity" form="addreqForm"/>
-            </div>
-            <div>
-                <input type="text" placeholder="Voltage Rating" required="" name="voltage" id="voltage" form="addreqForm"/>
-            </div>
-            <div>
-                <input type="text" placeholder="Wattage" required="" id="wattage" name="wattage" form="addreqForm"/>
-            </div>
-            <div>
-                <input type="text" placeholder="Others" required="" name="others" id="others" form="addreqForm"/>
-            </div>
-            <div>
-                <input type="submit" value="Request" form="addreqForm"/>
-            </div>
-    </section><!-- content -->
-</div><!-- container -->
+    <h1>Add Request</h1>
+    <div id="form-div">
+        <form action="/addreq" id="form" method="post"></form>
+    </div>
+    <div id="components">
+    </div>
+    <div id="button-div">
+        <button type="button" id="addcomp">Add another component</button>
+    </div>
+    <div id="submit-div">
+        <span id="batch">
+            <label for="batchName">Batch Name: </label>
+            <input type="text" id="batchName" name="batchName" maxlength=50 form="form"/>
+            <br/>
+        </span>
+        <input type="submit" value="Submit" form="form"/>
+    </div>
+    
 </body>
 </html>
