@@ -8,8 +8,10 @@
 
 <body>
 
-<h6 align="right"> Hi, Username 
-  <button id="logout">Logout</button>
+<h6 align="right"> Hi, <%= username %>
+  <form id="logout" method="get" action="/logout">
+    <input type="submit" id="logout" value="Logout" />
+  </form>
 </h6>
 
 <% include ../partials/side %>
