@@ -190,6 +190,7 @@ app.get('/home', function(req, res){
 		})
 	})
 })
+
 app.get('/logout', function(req, res){
 	var sess = req.session;
 	console.log('User logged out');
@@ -312,7 +313,7 @@ function mailMatched(prof_id, item_id, table) {
 	else {
 		idKey = 'inv_id';
 	}
-
+	// console.log("Sending email...")
 	var sql_com_item_desc = 'SELECT * FROM ' + table + ' WHERE ' + idKey + ' = ' + item_id;
 	var sql_com_prof = 'SELECT * FROM usrprofiles';
 	var email;
@@ -320,8 +321,10 @@ function mailMatched(prof_id, item_id, table) {
 	db.query(sql_com_prof, function(err, result) {
 		if (err) throw err;
 		email = result[0].email;
+		// console.log(email)
 		db.query(sql_com_item_desc, function(err2, result2) {
 			if (err2) throw err2;
+			// console.log(result2)
 			var mailOptions = {
 				from : 'componentshare@gmail.com',
 				to : email,
