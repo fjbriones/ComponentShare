@@ -5,11 +5,6 @@ var components;
 var componentJSON;
 var componentList;
 
-$.getJSON('10.158.3.101:3000/js/components.json', function(data){
-    componentJSON = data;
-    componentList = Object.keys(data);
-})
-
 function componentListFunction(i, item){
     $('#compType' + comp_count).append($('<option>', {
         value: item,
@@ -134,6 +129,11 @@ function newComponentFunction(){
 }
 
 $(document).ready(function(){
+
+    $.getJSON('10.158.3.101:3000/js/components.json', function(data){
+        componentJSON = data;
+        componentList = Object.keys(data);
+    })
     // $('#components').append(componentJSON)
 
     newComponentFunction();
