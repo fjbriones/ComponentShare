@@ -5,7 +5,7 @@ var components;
 var componentJSON;
 var componentList;
 
-$.getJSON("@Url.Content('/js/components.json')", function(data){
+$.getJSON('js/components.json', function(data){
     componentJSON = data;
     componentList = Object.keys(data);
 })
@@ -137,8 +137,10 @@ $(document).ready(function(){
 
    // $('#components').append(componentJSON)
 
-    newComponentFunction();
     $('#batch').hide();
+
+    newComponentFunction();
+
 
     $("#addcomp").click(function(){
         newComponentFunction();
