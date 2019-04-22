@@ -18,47 +18,97 @@
  </h6>
 
 <div id="mySidepanel" class="sidepanel">
+  <div class="card4">
+    <a href="home.html">HOME</a>
+  </div>
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-  <img src="images.png" alt="Avatar" width="50" height="50">
-  <a href="profile.html">Username</a>
-  <a href="chat.html">Person A</a>
-  <a href="chat.html">Person B</a>
-  <a href="chat.html">Person C</a>
+  <br>
+  <div class="card3">
+    <p><img src="images.png" alt="Avatar">
+    <a href="profile.html">Username</a></p>
+  </div>
+  <br>
+  <h3>Matched components with:</h3>
+  <br>
+  <div class="card3">
+    <p><img src="sherlock.jpg" alt="Avatar" class="right">
+    <a href="chat.html">Person A</a></p>
+  </div>
+  <div class="card3">
+    <p><img src="sherlock.jpg" alt="Avatar" class="right">
+    <a href="chat.html">Person B</a></p>
+  </div>
+  <div class="card3">
+    <p><img src="sherlock.jpg" alt="Avatar" class="right">
+    <a href="chat.html">Person C</a></p>
+  </div>
+  <div class="card3">
+    <p><img src="sherlock.jpg" alt="Avatar" class="right">
+    <a href="chat.html">Person D</a></p>
+  </div>
+  <div class="card3">
+    <p><img src="sherlock.jpg" alt="Avatar" class="right">
+    <a href="chat.html">Person E</a></p>
+  </div>
 </div>
 <button class="openbtn" onclick="openNav()">☰</button>  
 
-<div class="container">
-<div class="chat-peer">
-  <img src="sherlock.jpg" alt="Avatar">
-  <p>Hello. Pwede na po ba ito?</p>
-  <span class="time-right">1:40</span>
+<h3 align="center">Matched >insert_matched_component_here< with >insert_name_here<</h3>
+<div class="container3">
+	  
+	  <br>
+	<div class="chat-peer">
+	  <img src="sherlock.jpg" alt="Avatar">
+	  <p>Hello. Pwede na po ba ito?</p>
+	  <span class="time-right">1:40</span>
+	</div>
+
+	<div class="chat">
+	  <img src="images.png" alt="Avatar" class="right">
+	  <p>Hi! Paano ba pinapagana 'to?</p>
+	  <span class="time-left">2:03</span>
+	</div>
+
+	<div class="chat-peer">
+	  <img src="sherlock.jpg" alt="Avatar">
+	  <p>Di ko rin po alam...</p>
+	  <span class="time-right">2:05</span>
+	</div>
+
+	<div class="chat">
+	  <img src="images.png" alt="Avatar" class="right">
+	  <p>Oh no...</p>
+	  <span class="time-left">2:17</span>
+	</div> 
+
+	<div class="chat">
+	  <img src="images.png" alt="Avatar" class="right">
+	  <p>May problema rin kapag nagscroll...</p>
+	  <span class="time-left">2:46</span>
+	</div> 
+
+	<div class="chat-peer">
+	  <img src="sherlock.jpg" alt="Avatar">
+	  <p>Uhm...</p>
+	  <span class="time-right">3:15</span>
+	</div>
+
+	<div class="chat-peer">
+	  <img src="sherlock.jpg" alt="Avatar">
+	  <p>Okay lang bang magscroll hanggang sa dulo bago makapag-send ulit ng message? Di ko pa maayos gaya sa messenger... hehe :D</p>
+	  <span class="time-right">3:18</span>
+	</div>
 </div>
 
-<div class="chat">
-  <img src="images.png" alt="Avatar" class="right">
-  <p>Hi! Paano ba pinapagana 'to?</p>
-  <span class="time-left">2:03</span>
+<div class="container2">
+	<div class="form-chat" id="myForm">
+	  <form action="chat.html">
+	    <textarea placeholder="Type message.." name="msg" required></textarea>
+	    <button type="submit" class="btn">Send</button>
+	  </form>
+	</div>
 </div>
 
-<div class="chat-peer">
-  <img src="sherlock.jpg" alt="Avatar">
-  <p>Di ko rin po alam...</p>
-  <span class="time-right">2:05</span>
-</div>
-
-<div class="chat">
-  <img src="images.png" alt="Avatar" class="right">
-  <p>Oh no...</p>
-  <span class="time-left">2:17</span>
-</div> 
-
-<div class="form-chat" id="myForm">
-  <form action="chat.html">
-    <textarea placeholder="Type message.." name="msg" required></textarea>
-    <button type="submit" class="btn">Send</button>
-  </form>
-</div>
-</div>
 
 <script>
 function openNav() {
