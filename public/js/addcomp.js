@@ -5,7 +5,7 @@ var components;
 var componentJSON;
 var componentList;
 
-$.getJSON('http://10.158.3.101:3000/js/components.json', function(data){
+$.getJSON('10.158.3.101:3000/js/components.json', function(data){
     componentJSON = data;
     componentList = Object.keys(data);
 })
