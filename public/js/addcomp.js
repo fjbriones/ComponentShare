@@ -5,7 +5,7 @@ var components;
 var componentJSON;
 var componentList;
 
-$.getJSON('/js/components.json', function(data){
+$.getJSON('http://10.158.3.101:3000/js/components.json', function(data){
     componentJSON = data;
     componentList = Object.keys(data);
 })
@@ -134,7 +134,7 @@ function newComponentFunction(){
 }
 
 $(document).ready(function(){
-    $('#components').append(componentList)
+    // $('#components').append(componentJSON)
 
     newComponentFunction();
     $('#batch').hide();
