@@ -6,6 +6,7 @@ var componentJSON;
 var componentList;
 
 $.getJSON('js/components.json', function(data){
+    console.log(data)
     componentJSON = data;
     componentList = Object.keys(data);
 })

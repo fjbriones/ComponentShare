@@ -245,6 +245,11 @@ app.get('/signup', function (req, res) {
 	})
 })
 
+app.get('/components', function(req, res) {
+	console.log(req)
+	res.json(components)
+})
+
 app.post('/registered', function (req, res) {
 	var sql_com_usrprof = "INSERT INTO usrprofiles (fname, lname, email, contactnum) VALUES (?, ?, ?, ?)";
 	var sql_com_usrid = "SELECT profile_id FROM usrprofiles WHERE email=?";
