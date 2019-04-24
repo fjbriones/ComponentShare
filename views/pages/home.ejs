@@ -19,7 +19,7 @@
 </div>
 
 <div class="row">
-	<div class="container">
+	<div class="col">
 		<div class="column">
 			<div class="card">
 				<h3>Inventory</h3>
@@ -30,21 +30,20 @@
 				<div>
 					<ul>
 						<% inventory.forEach(function(inv) { %>
-						<div>
-							<form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
-						</div>
-						<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
-          <div>
+			
 							<li>
-								<button class="collapsible"><%= inv.quantity %> - <%= inv.item %></button>
-								<div id="collapseinv<%= inv.inv_id %>" class="coll-content">
+								<div>
+									<form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
+								</div>
+								<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
+								<button class="collapsible" data-toggle="collapse" data-target="#collapseinv<%= inv.inv_id %>"><%= inv.quantity %> - <%= inv.item %></button>
+								<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
+								<div id="collapseinv<%= inv.inv_id %>" class="collapse">
 									<% inv.remarks.forEach(function(remark) { %>
 										<%= remark %> <br>
 									<% }) %>
 								</div>
-								<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
 							</li>
-						</div>
 
 						<% }); %>
 					</ul>
@@ -53,7 +52,7 @@
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="col">
 		<div class="column">
 			<div class="card">
 				<h3>Requests</h3>
@@ -70,8 +69,8 @@
 						<input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
 						<div>
 							<li>
-								<button class="collapsible"><%= req.quantity %> - <%= req.item %></button>
-								<div id="collapsereq<%= req.req_id %>" class="coll-content">
+								<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= req.quantity %> - <%= req.item %></button>
+								<div id="collapsereq<%= req.req_id %>" class="collapse">
 									<% req.remarks.forEach(function(remark) { %>
 										<%= remark %> <br>
 									<% }) %>
@@ -86,7 +85,7 @@
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="col">
 		<div class="column">
 			<div class="card">
 				<h3>General Feed</h3>
@@ -96,8 +95,8 @@
 						<% feed.forEach(function(item) { %>
 						<div>
 							<li>
-								<button class="collapsible"><%= item.quantity %> - <%= item.item %></button>
-								<div id="collapsefeed<%= item.req_id %>" class="coll-content">
+								<button class="collapsible" data-toggle="collapse" data-target="#collapsefeed<%= item.req_id %>"><%= item.quantity %> - <%= item.item %></button>
+								<div id="collapsefeed<%= item.req_id %>" class="collapse">
 									<% item.remarks.forEach(function(remark) { %>
 										<%= remark %> <br>
 									<% }) %>
