@@ -10,6 +10,10 @@
 
 <body>
     <h1>Add Request</h1>
+    <div id="loadbatch">
+        <form action="/batches" id="batchform" method="get"></form>
+        <input type="submit" value="Load batch" form="batchform">
+    </div>
     <div id="form-div">
         <form action="/addreq" id="form" method="post"></form>
     </div>
