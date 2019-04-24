@@ -7,8 +7,11 @@ var promise = require('promise')
 var session = require('express-session')
 var fs = require('fs')
 var nodemailer = require('nodemailer');
+var redis = require('redis');
 
 var app = express();
+var server = app.listen(3000);
+var io = require("socket.io").listen(server);
 
 var transporter = nodemailer.createTransport({
 	service: 'gmail',
@@ -29,6 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
+	socketPath: "/var/run/mysqld/mysqld.sock",
+	debug: false
 });
 
 fs.readFile(__dirname + '/public/js/components.json', function(err, data){
@@ -79,6 +84,14 @@ mysql_con.connect(function(err){
 	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id), req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id))";
 	mysql_con.query(createMatches, function(err, results, fields) {
 		if(err) {
+			console.log(err.message);
+		}
+	})
+
+	console.log('Looking for table messages')
+	let createMessages = "CREATE TABLE IF NOT EXISTS messages(msg_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, user_from VARCHAR(40), user_to VARCHAR(40), message text)";
+	mysql_con.query(createMessages, function(err, results, fields){
+		if(err){
 			console.log(err.message);
 		}
 	})
@@ -149,6 +162,8 @@ function readRemarks(database) {
 app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var username = req.session.username;
+	io.sockets.emit('user', username);
+	//io.sockets.broadcast.emit('user', username);
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
 	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
@@ -306,6 +321,13 @@ app.get('/addinv', function(req, res) {
 
 app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
+})
+app.get('/chat', function(req,res){
+	var cur_uname = req.session.username;
+	console.log("User is " + cur_uname);
+	io.sockets.emit("currentuser", cur_uname);
+	//io.broadcast.emit("currentuser", cur_uname);
+	res.render('pages/chat');
 })
 
 function mailText(firstName, item, remarks, table) {
@@ -469,4 +491,48 @@ app.post('/addinv', function(req, res) {
 	res.redirect('/home') 
 })
 
-app.listen(port);
+
+io.on("connection", function(client){
+	
+	console.log("User connected" + client.id);
+	client.emit('connected');
+
+	client.on('join', function(userId){
+		const channel = 'push:notifications:' + userId;
+		console.log('Connecting to redis: ' +channel);
+		client.redisClient = redis.createClient();
+		client.redisClient.subscribe(channel);
+
+		client.redisClient.on('message', (channel, message) => {
+			console.log(channel + ': ' + message);
+			client.emit('notification', channel, message);
+		});
+	});
+
+	var owner;
+	var request;
+	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.inv_profile_id";
+	var sql_com_searcher =  "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
+	mysql_con.query(sql_com_owner, function(err,result, fields){
+		if(err){
+			throw err;
+		}else{
+			owner = result[0].uname;
+			client.emit("own", owner);
+			mysql_con.query(sql_com_searcher, function(err,result1, fields){
+				if(err){
+					throw err;
+				}else{
+					request = result1[0].uname;
+					client.emit("req", request);
+					//console.log(result[0].uname);
+				}
+			});
+		}
+	});
+	
+	
+	
+});
+
+
