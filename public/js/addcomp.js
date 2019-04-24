@@ -129,7 +129,7 @@ function newComponentFunction(){
 }
 
 $.getJSON('js/components.json', function(data){
-    console.log(data)
+    // console.log(data)
     componentJSON = data;
     componentList = Object.keys(data);
 

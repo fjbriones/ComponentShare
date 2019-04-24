@@ -308,6 +308,26 @@ app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
 
+function mailText(firstName, item, remarks, table) {
+	var remarksJSON = JSON.parse(remarks)
+	var descriptors = Object.keys(remarksJSON)
+
+	text = ""
+	text += "Congratulations " + firstName + ",<br><br><br>"
+	text += "Your <b>" + item +  "</b> with the following specifications has been matched from your <b>" + table + "</b>.<br><br>"
+	text += "<table style='width:100%'>"
+	descriptors.forEach(function(value, index) {
+		text += "<th>" + value + "</th>"
+		text += "<td>" + remarksJSON[value] + "</td>"
+		text += "</tr>"
+	})
+	text += "</table><br>"
+	text += "Please login to your account to communicate with your match.<br><br><br>"
+	text += "Sincerely,<br><br>"
+	text += "Component Share team"
+	return text
+}
+
 //Sending mail notification
 function mailMatched(prof_id, item_id, table) {
 	var idKey;
@@ -322,10 +342,12 @@ function mailMatched(prof_id, item_id, table) {
 	var sql_com_item_desc = 'SELECT * FROM ' + table + ' WHERE ' + idKey + ' = ' + item_id;
 	var sql_com_prof = 'SELECT * FROM usrprofiles';
 	var email;
+	var firstName;
 
 	db.query(sql_com_prof, function(err, result) {
 		if (err) throw err;
 		email = result[0].email;
+		firstName = result[0].fname;
 		// console.log(email)
 		db.query(sql_com_item_desc, function(err2, result2) {
 			if (err2) throw err2;
@@ -334,7 +356,7 @@ function mailMatched(prof_id, item_id, table) {
 				from : 'componentshare@gmail.com',
 				to : email,
 				subject : 'Item matched from ' + table,
-				text: result2[0].item + result2[0].remarks
+				html: mailText(firstName, result2[0].item, result2[0].remarks, table)
 			}
 			transporter.sendMail(mailOptions, function(err3, info) {
 				if (err3) throw err3;
@@ -342,11 +364,9 @@ function mailMatched(prof_id, item_id, table) {
 			})
 		})
 	})
-	
-
 }
 
-//The precious matching algorithm, ahahahahahaha so fun
+//The Matching Algorithm
 function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? ORDER BY timestamp ASC';
 	var sql_com_values = [compType, compDesc];
