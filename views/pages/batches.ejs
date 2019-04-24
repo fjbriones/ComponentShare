@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<% include ../partials/head %>
+</head>
+
+<body>
+	<div class="row">
+		
+	<% batches.forEach(function(batch, index) { %>
+		<div class="container">
+		<div id="form-div">
+	        <form action="/addreq" id="form<%= index%>" method="post"></form>
+	    </div>
+		<div class="card">
+			<div class="card2"><h3><%= batch %></h3></div>
+			<ul>
+			<% items[index].forEach(function (item, index2) { %> 
+				<li> <%= quantities[index][index2] %> - <%= item %>: <%= remarks[index][index2] %></li>
+				<input type="hidden" name="Quan<%=index2%>" value="<%= quantities[index][index2] %>" form="form<%= index%>"/>
+				<input type="hidden" name="compType<%=index2%>" value="<%= item %>" form="form<%= index%>"/>
+				<% remarks[index][index2].forEach(function (remark, index3) { %> 
+					<input type="hidden" name="<%= remark.split(': ')[0] %><%=index2%>" value="<%= remark.split(': ')[1] %>" form="form<%= index%>"/>
+				<% }) %>
+			<% }) %>
+			</ul>
+			<input type="submit" value="Request batch" form="form<%= index%>"/>
+		</div>
+		</div>
+	<% }) %>
+
+	</div>
+</body>
+</html>

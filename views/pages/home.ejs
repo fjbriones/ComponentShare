@@ -34,7 +34,7 @@
 							<form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
 						</div>
 						<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
-						<div>
+          <div>
 							<li>
 								<button class="collapsible"><%= inv.quantity %> - <%= inv.item %></button>
 								<div id="collapseinv<%= inv.inv_id %>" class="coll-content">
@@ -45,6 +45,7 @@
 								<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
 							</li>
 						</div>
+
 						<% }); %>
 					</ul>
 				</div>

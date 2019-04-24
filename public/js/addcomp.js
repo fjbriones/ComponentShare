@@ -5,11 +5,6 @@ var components;
 var componentJSON;
 var componentList;
 
-$.getJSON('/js/components.json', function(data){
-    componentJSON = data;
-    componentList = Object.keys(data);
-})
-
 function componentListFunction(i, item){
     $('#compType' + comp_count).append($('<option>', {
         value: item,
@@ -133,11 +128,22 @@ function newComponentFunction(){
     }
 }
 
-$(document).ready(function(){
-    newComponentFunction();
-    $('#batch').hide();
+$.getJSON('js/components.json', function(data){
+    // console.log(data)
+    componentJSON = data;
+    componentList = Object.keys(data);
 
-    $("#addcomp").click(function(){
+    $(document).ready(function(){
+
+       // $('#components').append(componentJSON)
+
+        $('#batch').hide();
+
         newComponentFunction();
+
+
+        $("#addcomp").click(function(){
+            newComponentFunction();
+        })
     })
 })
