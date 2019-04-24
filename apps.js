@@ -186,6 +186,7 @@ app.get('/home', function(req, res){
 					request: request,
 					feed: feed
 				})
+				readMatches()
 			})
 		})
 	})
@@ -362,6 +363,20 @@ function mailMatched(prof_id, item_id, table) {
 				if (err3) throw err3;
 				console.log('Email sent: ' + info.response)
 			})
+		})
+	})
+}
+
+function readMatches() {
+	var sql_com_rdmatch = 'SELECT * FROM matches'
+	// var text = ""
+
+	db.query(sql_com_rdmatch, function(err, result) {
+		result.forEach(function(value, index, array) {
+			var text = "Request " + value.match_id
+			text += " Owner: " + value.inv_profile_id
+			text += " Request: " + value.req_profile_id
+			console.log(text)
 		})
 	})
 }
