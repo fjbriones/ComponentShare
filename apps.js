@@ -341,11 +341,11 @@ function mailMatched(prof_id, item_id, table) {
 	}
 	// console.log("Sending email...")
 	var sql_com_item_desc = 'SELECT * FROM ' + table + ' WHERE ' + idKey + ' = ' + item_id;
-	var sql_com_prof = 'SELECT * FROM usrprofiles';
+	var sql_com_prof = 'SELECT * FROM usrprofiles WHERE profile_id = (?)';
 	var email;
 	var firstName;
 
-	db.query(sql_com_prof, function(err, result) {
+	db.query(sql_com_prof, prof_id, function(err, result) {
 		if (err) throw err;
 		email = result[0].email;
 		firstName = result[0].fname;
