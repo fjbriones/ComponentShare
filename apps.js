@@ -361,7 +361,7 @@ function mailMatched(prof_id, item_id, table) {
 			}
 			transporter.sendMail(mailOptions, function(err3, info) {
 				if (err3) throw err3;
-				console.log('Email sent: ' + info.response)
+				console.log('Email sent to '+ email + ': ' + info.response)
 			})
 		})
 	})
