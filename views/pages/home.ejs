@@ -92,11 +92,11 @@
 				<br>
 				<div>
 					<ul>
-						<% feed.forEach(function(item) { %>
+						<% feed.forEach(function(item, index) { %>
 						<div>
 							<li>
-								<button class="collapsible" data-toggle="collapse" data-target="#collapsefeed<%= item.req_id %>"><%= item.quantity %> - <%= item.item %></button>
-								<div id="collapsefeed<%= item.req_id %>" class="collapse">
+								<button class="collapsible" data-toggle="collapse" data-target="#collapsefeed<%= index %>"><%= item.quantity %> - <%= item.item %></button>
+								<div id="collapsefeed<%= index %>" class="collapse">
 									<% item.remarks.forEach(function(remark) { %>
 										<%= remark %> <br>
 									<% }) %>
