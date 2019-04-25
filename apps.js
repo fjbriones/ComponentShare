@@ -81,7 +81,7 @@ mysql_con.connect(function(err){
     });
 
 	console.log('Looking for table matches.');
-	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id), req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id))";
+	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE)";
 	mysql_con.query(createMatches, function(err, results, fields) {
 		if(err) {
 			console.log(err.message);
@@ -201,6 +201,7 @@ app.get('/home', function(req, res){
 					request: request,
 					feed: feed
 				})
+				readMatches()
 			})
 		})
 	})
@@ -388,6 +389,20 @@ function mailMatched(prof_id, item_id, table) {
 	})
 }
 
+function readMatches() {
+	var sql_com_rdmatch = 'SELECT * FROM matches'
+	// var text = ""
+
+	db.query(sql_com_rdmatch, function(err, result) {
+		result.forEach(function(value, index, array) {
+			var text = "Request " + value.match_id
+			text += " Owner: " + value.inv_profile_id
+			text += " Request: " + value.req_profile_id
+			console.log(text)
+		})
+	})
+}
+
 //The Matching Algorithm
 function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? ORDER BY timestamp ASC';
@@ -491,7 +506,6 @@ app.post('/addinv', function(req, res) {
 	res.redirect('/home') 
 })
 
-
 io.on("connection", function(client){
 	
 	console.log("User connected" + client.id);
@@ -535,4 +549,56 @@ io.on("connection", function(client){
 	
 });
 
+app.get('/batches', function(req, res) {
+	var sql_com_batches = "SELECT DISTINCT batchname FROM request WHERE batchname <> ''"
+	var sql_com_items = "SELECT * FROM request where batchname = ?"
+	var batches = [];
+	var quantities =[];
+	var items = [];
+	var remarks = [];
 
+	db.query(sql_com_batches, function(err, result){
+		result.forEach(function(value, index, array) {
+			db.query(sql_com_items, value.batchname, function(err2, result2) {
+				batches.push(value.batchname)
+				result2 = readRemarks(result2)
+				var quantities_batch = [];
+				var items_batch = [];
+				var remarks_batch = [];
+				result2.forEach(function(value2, index2, array2) {
+					quantities_batch.push(value2.quantity)
+					items_batch.push(value2.item)
+					remarks_batch.push(value2.remarks)
+
+					if(array2.length == index2 + 1) {
+						quantities.push(quantities_batch)
+						items.push(items_batch)
+						remarks.push(remarks_batch)
+						// console.log(remarks_batch)
+
+						if(array.length == index + 1) {
+							res.render('pages/batches', {
+								batches: batches,
+								items: items,
+								quantities: quantities,
+								remarks: remarks
+							})
+						}
+					}
+					// console.log(value.batchname)
+					// console.log(value2.quantity)
+					// console.log(value2.item)
+					// console.log(value2.remarks)
+					// batches_json += ""
+				})
+				// console.log(batches_json)
+				// console.log(result2)
+				// console.log(result2.items)
+				// console.log(result2.remarks)
+			})
+		})
+
+	})
+})
+
+app.listen(port);

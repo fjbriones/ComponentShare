@@ -46,7 +46,7 @@ function newComponentFunction(){
     cur_comp = comp_count;
 
     $("#components").append($('<div>', {
-        class: "form-group",
+        class: "form-inline",
         id: "comp" + comp_count,
         style:"display:block"
     }))
@@ -100,30 +100,39 @@ function newComponentFunction(){
             init = 0;
             final = 0;
         }
-
         $('#batch').show();
 
-        for(var i = init; i<= final; i++){
-            var count = i + comp_count
-            $('#comp' + count).append($('<input>', {
-                type: "button",
-                value: "Remove component",
-                id: "remove" + count,
-                class: "remove"
-            }))
-            rem_count++;
-            $('#remove' + count).click(function(){
-                rem_id = $(this).attr('id');
-                rem_comp = rem_id[rem_id.length - 1];
-                $('#comp'+rem_comp).remove();
-                $(this).remove();
-                rem_count--;
-                if(rem_count==1){
-                    $('.remove').remove();
-                    $('#batch').hide();
-                    rem_count = 0;
+        for(var i = 0; i<= comp_count; i++){
+            var count = i;
+            // console.log('#comp' + count)
+            if($('#comp' + count).length!=0) {
+                if ($('#remove'+count).length==0) {
+                    $('#comp' + count).append($('<input>', {
+                        type: "button",
+                        value: "Remove component",
+                        id: "remove" + count,
+                        class: "remove form-control"
+                    }))
+                    rem_count++;
+                    console.log(rem_count)
+
+                    $('#remove' + count).click(function(){
+                        rem_id = $(this).attr('id');
+                        rem_comp = rem_id[rem_id.length - 1];
+                        $('#comp'+rem_comp).remove();
+                        $(this).remove();
+                        rem_count--;
+                        console.log("Removing: " + rem_count)
+                        if(rem_count==1){
+                            $('.remove').remove();
+                            $('#batch').hide();
+                            rem_count = 0;
+                        }
+                    })
                 }
-            })
+            }
+            
+            
         }
     }
 }

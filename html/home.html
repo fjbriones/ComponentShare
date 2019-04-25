@@ -65,6 +65,12 @@
       </div><!-- form -->
         <div>
           <ul>
+          	<li><button class="collapsible">Something component</button>
+				<div class="coll-content">
+  					<p>put list of sub-components here</p>
+				</div>
+				<span class="close">&times;</span>
+			</li>
             <li>1<span class="close">&times;</span></li>
             <li>2<span class="close">&times;</span></li>
             <li>3<span class="close">&times;</span></li>
@@ -101,6 +107,11 @@
             <li>8<span class="close">&times;</span></li>
             <li>9<span class="close">&times;</span></li>
             <li>10<span class="close">&times;</span></li>
+            <li><button class="collapsible">Something component</button>
+				<div class="coll-content">
+  					<p>put list of sub-components here</p>
+				</div>
+			</li>
           </ul>
         </div>
     </div>
@@ -139,6 +150,24 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidepanel").style.width = "0";
 }
+
+
+// from: https://www.w3schools.com/howto/howto_js_collapsible.asp
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+
 </script>
 
 </body>
