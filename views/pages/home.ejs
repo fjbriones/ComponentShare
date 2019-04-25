@@ -3,10 +3,40 @@
 
 <head>
 	<% include ../partials/head %>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
+	<script type="text/javascript">
+		
+		var socket = io.connect('http://10.158.3.101:3000');
+		
+
+		socket.on('user', function(data){
+			$("#notifs").append('<li>Connecting</li>');
+			console.log("user received");
+			var userId = data;
+
+		});
+
+		socket.on('notification', function(channel, notification){
+			console.log(channel + ': ' + notification);
+			$("#notifs").append('<li>' + channel + ':' + notification+'</li>');
+		});
+
+		socket.on('connected', function(){
+			var msg = "Push notification enabled";
+			$("#notifs").append('<li>' + msg+'</li>');
+			console.log(msg);
+			socket.emit('join', userId);
+
+		});
+	</script>
+
+
 </head>
 
 <body>
 
+    
 <h6 align="right"> Hi, <%= username %>
 	<form id="logout" method="get" action="/logout">
 		<input type="submit" id="logout" value="Logout" />
@@ -110,6 +140,8 @@
 		</div>
 	</div>
 </div>
-
+<div id="notifbar">
+	<h2>Notifications</h2>
+	<ul id="notifs"></ul>
 </body>
 </html>
