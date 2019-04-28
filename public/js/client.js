@@ -2,7 +2,8 @@
 var socket = io.connect('http://10.158.3.101:3000');
 var myID = 0;
 var hisID = 0;
-
+//on page load emit mathced string to enable chat
+socket.emit("matched");
 //need to check if owner id is the current user
 socket.on("own", function(data){
 	console.log(data);
