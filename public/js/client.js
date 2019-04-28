@@ -1,22 +1,31 @@
+//initiate socket connection
 var socket = io.connect('http://10.158.3.101:3000');
 var myID = 0;
 var hisID = 0;
-
+//on page load emit mathced string to enable chat
+socket.emit("matched");
+//need to check if owner id is the current user
 socket.on("own", function(data){
 	console.log(data);
 	$("#user_id").val(data);
 	$("#username").val(data);
 
 	myID = data;
-})
+});
+
+//need to check if requester id is the current user
 socket.on("req", function(data){
 	console.log(data);
 	$("#user_to").val(data);
 	hisID = data;
-})
-socket.on("currentuser", function(data){
+});
+
+
+socket.on("currentuser", function(data){ //check lang
 	console.log("current user: " +data);
-})
+});
+
+//handle loaded data from message database
 socket.on("thread", function(data) {
 	$("#typing").html("");
 	if(data.user_to == myID && data.user_id == hisID){
@@ -26,6 +35,7 @@ socket.on("thread", function(data) {
 	}
 });
 
+//Show "typing..." message
 socket.on("typing", function(data){
 	if(data.user_to == myID && data.user_id ==hisID){
 		if(data.status == true){
@@ -36,6 +46,7 @@ socket.on("typing", function(data){
 	}
 });
 
+//emit form contents to socket
 $("#send").click(function(){
 	var user_id = $("#user_id").val();
 	var username = $("#username").val();
@@ -63,6 +74,7 @@ function timeoutFunction(){
 	}
 	socket.emit("is_typing", typo);
 }
+
 $("#message").keypress(function(e){
 	if(e.which !== 13){
 		var typo = {
