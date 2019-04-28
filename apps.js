@@ -32,8 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	// socketPath: "/var/run/mysqld/mysqld.sock",
-	socketPath: "",
+	socketPath: "/var/run/mysqld/mysqld.sock",
+	// socketPath: "",
 	debug: false
 });
 
@@ -80,7 +80,7 @@ mysql_con.connect(function(err){
     });
 
 	console.log('Looking for table matches.');
-	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE), done tinyint(1) default 0";
+	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE, done tinyint(1) default 0)";
 	mysql_con.query(createMatches, function(err, results, fields) {
 		if(err) {
 			console.log(err.message);
@@ -200,6 +200,7 @@ app.get('/home', function(req, res){
 				request = readRemarks(request)
 				feed = readRemarks(feed)
 				res.render('pages/home', {
+					userId:  userId,
 					username: username,
 					inventory: inventory,
 					request: request,
@@ -515,7 +516,7 @@ app.post('/addinv', function(req, res) {
 
 io.on("connection", function(client){ 
 	//push notification function
-	console.log("User connected" + client.id);
+	console.log("User connected " + client.id);
 	client.emit('connected');
     //create user push notif redis channel
 	client.on('join', function(userId){
@@ -535,22 +536,24 @@ io.on("connection", function(client){
 
 	var owner;
 	var request;
-	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.inv_profile_id";
+	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
 	var sql_com_searcher =  "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
 	mysql_con.query(sql_com_owner, function(err,result, fields){
 		if(err){
 			throw err;
 		}else{
-			owner = result[0].uname;
-			client.emit("own", owner);
-			mysql_con.query(sql_com_searcher, function(err,result1, fields){
-				if(err){
-					throw err;
-				}else{
-					request = result1[0].uname;
-					client.emit("req", request);
-				}
-			});
+			if (result.length > 0) {
+				owner = result[0].uname;
+				client.emit("own", owner);
+				mysql_con.query(sql_com_searcher, function(err,result1, fields){
+					if(err){
+						throw err;
+					}else{
+						request = result1[0].uname;
+						client.emit("req", request);
+					}
+				});
+			}
 		}
 	});
 	
@@ -594,16 +597,7 @@ app.get('/batches', function(req, res) {
 							})
 						}
 					}
-					// console.log(value.batchname)
-					// console.log(value2.quantity)
-					// console.log(value2.item)
-					// console.log(value2.remarks)
-					// batches_json += ""
 				})
-				// console.log(batches_json)
-				// console.log(result2)
-				// console.log(result2.items)
-				// console.log(result2.remarks)
 			})
 		})
 
