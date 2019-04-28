@@ -522,7 +522,7 @@ io.on("connection", function(client){
 	client.on('join', function(userId){
 		const channel = 'push:notifications:' + userId;
 		console.log('Connecting to redis: ' +channel);
-		client.redisClient = redis.createClient({host: "10.158.3.101"});
+		client.redisClient = redis.createClient();
 		client.redisClient.subscribe(channel);
 
 			//handle messages from client
