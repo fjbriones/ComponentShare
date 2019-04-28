@@ -506,22 +506,28 @@ app.post('/addinv', function(req, res) {
 	res.redirect('/home') 
 })
 
-io.on("connection", function(client){
-	
+//initiatie socket connection server side
+//connection is initiated on homepage and chat page visit refer to home.ejs script and public/client.js
+
+io.on("connection", function(client){ 
+	//push notification function
 	console.log("User connected" + client.id);
 	client.emit('connected');
-
+    //create user push notif redis channel
 	client.on('join', function(userId){
 		const channel = 'push:notifications:' + userId;
 		console.log('Connecting to redis: ' +channel);
 		client.redisClient = redis.createClient();
 		client.redisClient.subscribe(channel);
 
-		client.redisClient.on('message', (channel, message) => {
+			//handle messages from client
+			client.redisClient.on('message', (channel, message) => {
 			console.log(channel + ': ' + message);
 			client.emit('notification', channel, message);
 		});
 	});
+
+	//code block for chat sequence - ** needs to be separated from push notification connection
 
 	var owner;
 	var request;
@@ -539,7 +545,6 @@ io.on("connection", function(client){
 				}else{
 					request = result1[0].uname;
 					client.emit("req", request);
-					//console.log(result[0].uname);
 				}
 			});
 		}
