@@ -32,7 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	socketPath: "/var/run/mysqld/mysqld.sock",
+	// socketPath: "/var/run/mysqld/mysqld.sock",
+	socketPath: "",
 	debug: false
 });
 
@@ -63,8 +64,7 @@ mysql_con.connect(function(err){
 	});
 
 	console.log('Looking for table inventory.');
-	// let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),i_remarks text)";
-	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text)";
+	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text, category tinyint(1) default 0)";
 	mysql_con.query(createInventory, function(err, results, fields){
 		if(err){
 			console.log(err.message);
@@ -72,8 +72,7 @@ mysql_con.connect(function(err){
 	});
 
     console.log('Looking for table request.');
-	// let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
-	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text, batchname varchar(50))";
+	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text , category tinyint(1) default 1, batchname varchar(50))";
 	mysql_con.query(createRequest, function(err, results, fields){
         if(err){
             console.log(err.message);
@@ -81,7 +80,7 @@ mysql_con.connect(function(err){
     });
 
 	console.log('Looking for table matches.');
-	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE)";
+	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE), done tinyint(1) default 0";
 	mysql_con.query(createMatches, function(err, results, fields) {
 		if(err) {
 			console.log(err.message);
@@ -151,7 +150,12 @@ function readRemarks(database) {
 		remarksKeys.forEach(function(value2, index2) {
 			// if (index2 > 0)
 			// 	newRemarks += "\n"
+			if (index2 == 0){
+				newRemarks.push(remarks[value2])
+			}
+			else {
 			newRemarks.push(value2 + ": " + remarks[value2])
+			}
 		})
 		data[index].remarks = newRemarks
 		// console.log(data[index].remarks)
@@ -166,7 +170,7 @@ app.get('/home', function(req, res){
 	//io.sockets.broadcast.emit('user', username);
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
-	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
+	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks, category FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
 
 	var inventory;
 	var request;
@@ -252,7 +256,6 @@ app.post('/deleteinventory', function(req, res){
 		}
 	})
 })
-
 
 app.get('/signup', function (req, res) {
 	var prompt = "";
@@ -405,8 +408,9 @@ function readMatches() {
 
 //The Matching Algorithm
 function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
-	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? ORDER BY timestamp ASC';
-	var sql_com_values = [compType, compDesc];
+
+	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? AND profile_id != ? ORDER BY timestamp ASC';
+	var sql_com_values = [compType, compDesc, userId];
 	var req_id;
 	var req_prof_id;
 	var inv_id;

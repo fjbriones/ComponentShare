@@ -70,12 +70,16 @@
 									<form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
 								</div>
 								<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
-								<button class="collapsible" data-toggle="collapse" data-target="#collapseinv<%= inv.inv_id %>"><%= inv.quantity %> - <%= inv.item %></button>
-								<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
-								<div id="collapseinv<%= inv.inv_id %>" class="collapse">
-									<% inv.remarks.forEach(function(remark) { %>
+								<% inv.remarks.forEach(function(remark, index) { %>
+									<% if (index == 0) { %>
+										<button class="collapsible" data-toggle="collapse" data-target="#collapseinv<%= inv.inv_id %>"><%= remark %> <%= inv.item %></button>
+										<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
+										<div id="collapseinv<%= inv.inv_id %>" class="collapse">
+											Quantity: <%= inv.quantity %> <br>
+									<% } else { %>
 										<%= remark %> <br>
-									<% }) %>
+									<% } %>
+								<% }) %>
 								</div>
 							</li>
 
@@ -97,21 +101,26 @@
 				<div>
 					<ul>
 						<% request.forEach(function(req) { %>
-						<div>
-							<form id="request<%= req.req_id %>" method="post" action="/deleterequest"></form>
-						</div>
-						<input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
-						<div>
 							<li>
-								<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= req.quantity %> - <%= req.item %></button>
-								<div id="collapsereq<%= req.req_id %>" class="collapse">
-									<% req.remarks.forEach(function(remark) { %>
-										<%= remark %> <br>
-									<% }) %>
+								<div>
+									<form id="request<%= req.req_id %>" method="post" action="/deleterequest"></form>
 								</div>
-								<span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span>
+								<input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
+								<div>
+								<% req.remarks.forEach(function(remark, index) { %>
+									<% if (index == 0) { %> 			
+										<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= remark %> <%= req.item %></button>
+										<span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span>
+										<div id="collapsereq<%= req.req_id %>" class="collapse">
+											Quantity: <%= req.quantity %> <br>
+									<% } else { %>
+										<%= remark %> <br>
+									<% } %>	
+									
+								<% }) %>
+								</div>
 							</li>
-						</div>
+						
 						<% }); %>
           			</ul>
 				</div>
@@ -129,11 +138,21 @@
 						<% feed.forEach(function(item, index) { %>
 						<div>
 							<li>
-								<button class="collapsible" data-toggle="collapse" data-target="#collapsefeed<%= index %>"><%= item.quantity %> - <%= item.item %></button>
-								<div id="collapsefeed<%= index %>" class="collapse">
-									<% item.remarks.forEach(function(remark) { %>
+								<% item.remarks.forEach(function(remark, index2) { %>
+									<% if (index2 == 0) { %>
+										<button class="collapsible" data-toggle="collapse" data-target="#collapsefeed<%= index %>">
+											<% if (item.category) { %> 
+												Request: 
+											<% } else { %>
+												Inventory: 
+											<% } %>
+											<%= remark %> <%= item.item %>
+										</button>
+										<div id="collapsefeed<%= index %>" class="collapse">
+											Quantity: <%= item.quantity %> <br>
+									<% } else { %>
 										<%= remark %> <br>
-									<% }) %>
+									<% }}) %>
 								</div>	
 							</li>
 						</div>
