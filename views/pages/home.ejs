@@ -40,12 +40,14 @@
 
 <body>
 
+<form id="logout" method="get" action="/logout"></form>
     
-<h6 align="right"> Hi, <%= username %>
-	<form id="logout" method="get" action="/logout">
+
+<div>
+	<h6 align="right"> Hi, <%= username %>
 		<input type="submit" id="logout" value="Logout" />
-	</form>
-</h6>
+	</h6>
+</div>
 
 <% include ../partials/side %>
 
