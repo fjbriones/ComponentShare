@@ -32,8 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	socketPath: "/var/run/mysqld/mysqld.sock",
-	// socketPath: "",
+	// socketPath: "/var/run/mysqld/mysqld.sock",
+	socketPath: "",
 	debug: false
 });
 
@@ -522,7 +522,7 @@ io.on("connection", function(client){
 	client.on('join', function(userId){
 		const channel = 'push:notifications:' + userId;
 		console.log('Connecting to redis: ' +channel);
-		client.redisClient = redis.createClient();
+		client.redisClient = redis.createClient({host: "10.158.3.101"});
 		client.redisClient.subscribe(channel);
 
 			//handle messages from client
