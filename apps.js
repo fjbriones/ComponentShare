@@ -7,7 +7,7 @@ var promise = require('promise')
 var session = require('express-session')
 var fs = require('fs')
 var nodemailer = require('nodemailer');
-var redis = require('redis');
+
 
 var app = express();
 var server = app.listen(3000);
@@ -588,7 +588,7 @@ io.on("connection", function(client){
 		console.log(data);
 		client.emit("thread", data);
 		client.broadcast.emit("thread", data);
-		db.query("INSERT INTO `message` (`user_from`, `user_to`, `message`) VALUES ('"+data.user_id+"', '"+data.user_to+"', '"+data.message+"' )");
+		// db.query("INSERT INTO `message` (`user_from`, `user_to`, `message`) VALUES ('"+data.user_id+"', '"+data.user_to+"', '"+data.message+"' )");
 	});
 
 	client.on('is_typing', function(data){
