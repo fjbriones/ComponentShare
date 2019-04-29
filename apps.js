@@ -334,8 +334,12 @@ app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
 app.get('/chat', function(req,res){
-	res.render('pages/chat');
-})
+	userId = req.session.userId;
+	res.render('pages/chat'
+	res.render('pages/home', {
+		userId:  userId
+	});
+});
 
 //Configurable text for the mail
 function mailText(firstName, item, remarks, table) {
@@ -523,27 +527,24 @@ app.post('/addinv', function(req, res) {
 io.on("connection", function(client){ 
 	//push notification function
 	console.log("User connected " + client.id);
-	// 
 
 	//code block for chat sequence - ** needs to be separated from push notification connection
-
-	var owner;
-	var request;
-	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
-	var sql_com_searcher =  "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
+	var owner_id;
+	var request_id;
+	var sql_com_owner = "SELECT user_id FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
+	var sql_com_searcher =  "SELECT user_id FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
 	mysql_con.query(sql_com_owner, function(err,result, fields){
 		if(err){
 			throw err;
 		}else{
 			if (result.length > 0) {
-				owner = result[0].uname;
-				client.emit("own", owner);
+				owner_id = result[0].user_id;
 				mysql_con.query(sql_com_searcher, function(err,result1, fields){
 					if(err){
 						throw err;
 					}else{
-						request = result1[0].uname;
-						client.emit("req", request);
+						request = result1[0].user_id;
+						client.emit("matchid", owner_id, request_id);
 					}
 				});
 			}
