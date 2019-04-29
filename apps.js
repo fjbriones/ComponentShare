@@ -587,13 +587,13 @@ io.on("connection", function(client){
 		}
 	});
 	client.on("messages", function(data){
-		// client.emit("thread", data);
+		client.emit("thread", data);
 		client.broadcast.emit("thread", data);
 		db.query("INSERT INTO `messages` (`user_from`, `user_to`, `message`) VALUES ('"+data.user_id+"', '"+data.user_to+"', '"+data.message+"' )");
 	});
 
 	client.on('is_typing', function(data){
-		console.log(data);
+		//console.log(data);
 		if(data.status === true){
 			client.emit("typing", data);
 			client.broadcast.emit('typing', data);
