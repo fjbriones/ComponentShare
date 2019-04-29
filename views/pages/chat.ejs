@@ -16,9 +16,9 @@
 
 			socket.on("matchid", function(data){
 				console.log(curUserId);
-				console.log(data.own_id);
-				console.log(data.req_id);
-				if(data == <%= userId %>){
+				console.log("owner id: " + data.own_id);
+				console.log("req id: " + data.req_id);
+				if(data.own_id == curUserId){
 					$("#user_id").val(data.own_id);
 					$("#username").val(data.own_id);
 					$("#user_to").val(data.req_id);
@@ -34,15 +34,6 @@
 				
 			});
 
-			//need to check if requester id is the current user
-			// socket.on("req", function(data){
-			// 	console.log(data);
-			// 	$("#user_to").val(data);
-			// 	hisID = data;
-			// });
-
-
-			//handle loaded data from message database
 			socket.on("thread", function(data) {
 				$("#typing").html("");
 				if(data.user_to == myID && data.user_id == hisID){
