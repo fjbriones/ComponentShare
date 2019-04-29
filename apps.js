@@ -174,8 +174,6 @@ function readRemarks(database) {
 app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var username = req.session.username;
-	io.sockets.emit('user', username);
-	//io.sockets.broadcast.emit('user', username);
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
 	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks, category FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
@@ -336,10 +334,6 @@ app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
 app.get('/chat', function(req,res){
-	var cur_uname = req.session.username;
-	console.log("User is " + cur_uname);
-	io.sockets.emit("currentuser", cur_uname);
-	//io.broadcast.emit("currentuser", cur_uname);
 	res.render('pages/chat');
 })
 
@@ -529,20 +523,7 @@ app.post('/addinv', function(req, res) {
 io.on("connection", function(client){ 
 	//push notification function
 	console.log("User connected " + client.id);
-	client.emit('connected');
-    //create user push notif redis channel
-	client.on('join', function(userId){
-		const channel = 'push:notifications:' + userId;
-		console.log('Connecting to redis: ' +channel);
-		client.redisClient = redis.createClient();
-		client.redisClient.subscribe(channel);
-
-			//handle messages from client
-			client.redisClient.on('message', (channel, message) => {
-			console.log(channel + ': ' + message);
-			client.emit('notification', channel, message);
-		});
-	});
+	// 
 
 	//code block for chat sequence - ** needs to be separated from push notification connection
 
