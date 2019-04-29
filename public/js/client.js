@@ -2,23 +2,25 @@
 var socket = io.connect('http://10.158.3.101:3000');
 var myID = 0;
 var hisID = 0;
-var curUserId = <%= userId %>;
+
 //on page load emit mathced string to enable chat
 
 socket.on("matchid", function(data, data1){
-	console.log(curUserId);
+	console.log(<%= userId %>);
 	console.log(data);
 	console.log(data1);
-	if(data == curUserId){
+	if(data == <%= userId %>){
 		$("#user_id").val(data);
 		$("#username").val(data);
 		$("#user_to").val(data1);
 		myID = data;	
+		hisID = data1;
 	}else{
 		$("#user_id").val(data1);
 		$("#username").val(data1);
 		$("#user_to").val(data);
 		hisID = data;
+		myID = data1;
 	}
 	
 });
