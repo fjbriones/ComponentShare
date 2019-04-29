@@ -5,39 +5,6 @@
 	<% include ../partials/head %>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
-	
-	<!-- <script type="text/javascript">
-		
-		//initiate socket connection on page load
-		var socket = io.connect('http://10.158.3.101:3000');
-		// var socket = io.connect('http://localhost:3000');
-		//check if current user is received **to be removed in the future
-		// socket.on('user', function(data){
-		// 	$("#notifs").append('<li>Connecting</li>');
-		// 	console.log("user received");
-		// 	console.log(<%= username %>)
-		// 	var userId = <%= userId %>;
-
-		// });
-
-		//connect user and create redis channel
-		socket.on('connected', function(){
-			var msg = "Push notification enabled";
-			$("#notifs").append('<li>' + msg+'</li>');
-			console.log(msg);
-			console.log(String(<%= username %>))
-			socket.emit('join', String(<%= username %>));
-
-		});
-
-		//handle processed notification in the server
-		socket.on('notification', function(channel, notification){
-			console.log(channel + ': ' + notification);
-			$("#notifs").append('<li>' + channel + ':' + notification+'</li>');
-		});
-
-	</script> -->
-
 	<script>
 		function timedRefresh(timeoutPeriod) {
 			setTimeout("location.reload(true);",timeoutPeriod);
@@ -228,5 +195,10 @@
 		</div>
 	</div>
 </div>
+<div id="notifbar">
+	<h2>Notifications</h2>
+	<ul id="notifs"></ul>
 </body>
 </html>
+
+

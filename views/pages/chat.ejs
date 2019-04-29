@@ -2,32 +2,45 @@
 	<head>
 		<title>Chat</title>
 		<meta name = "viewport" content="width = device-width, initial-scale = 1"/>
-		<link rel="stylesheet" href="style.css"/>
+		<link rel="stylesheet" href="css/style.css"/>
 		 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
    		 <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
-    
-   		 <script>
+
+	</head>
+	<body>
+		<input type="hidden" id="userId">
+		<input type="hidden" id="user_id" placeholder="myID"><input id="user_to" type="hidden" placeholder="hisID"><br/>
+		<input id="username" type="hidden" placeholder="my name">
+		<h1> Chat! </h1>
+		<form>
+			<input id = "message" type="text" placeholder="message">
+			<input type="button" id="send" value="Send">
+		</form>
+
+		<ul id="typing"></ul>
+		<ul id="thread"></ul>
+
+		 <script>
    		 	//initiate socket connection
 			var socket = io.connect('http://10.158.3.101:3000');
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
-		socket.on("matchid", function(data){
+			var uname = "<%= uname %>";
+			socket.on("matchid", function(data){
 				console.log(curUserId);
-				console.log("id1: " +data.own_id);
-				console.log("id2: " +data.req_id);
-				if(data == curUserId){
-				console.log(data.own_id);
-				console.log(data.req_id);
-				if(data == <%= userId %>){
+				console.log(uname);
+				console.log("owner id: " + data.own_id);
+				console.log("req id: " + data.req_id);
+				if(data.own_id == curUserId){
 					$("#user_id").val(data.own_id);
-					$("#username").val(data.own_id);
+					$("#username").val(uname);
 					$("#user_to").val(data.req_id);
 					myID = data.own_id;	
 					hisID = data.req_id;
 				}else{
 					$("#user_id").val(data.req_id);
-					$("#username").val(data.req_id);
+					$("#username").val(uname);
 					$("#user_to").val(data.own_id);
 					hisID = data.own_id;
 					myID = data.req_id;
@@ -35,15 +48,6 @@
 				
 			});
 
-			//need to check if requester id is the current user
-			// socket.on("req", function(data){
-			// 	console.log(data);
-			// 	$("#user_to").val(data);
-			// 	hisID = data;
-			// });
-
-
-			//handle loaded data from message database
 			socket.on("thread", function(data) {
 				$("#typing").html("");
 				if(data.user_to == myID && data.user_id == hisID){
@@ -66,6 +70,7 @@
 
 			//emit form contents to socket
 			$("#send").click(function(){
+				console.log('pressed');
 				var user_id = $("#user_id").val();
 				var username = $("#username").val();
 				var user_to = $("#user_to").val();
@@ -110,34 +115,6 @@
 				}
 			});
 
-			//$("#saveID").click(function(){
-			//	var val = $("#user_id").val();
-			//	var his = $("#user_to").val();
-			//	myID = val;
-			//	hisID = his;
-			//});
-				
-
-
-
    		 </script>
-	</head>
-	<body>
-		<input type="hidden" id="userId">
-		<input type="hidden" id="user_id" placeholder="myID"><input id="user_to" type="hidden" placeholder="hisID"><br/>
-		<input id="username" type="hidden" placeholder="my name">
-		<h1> Chat! </h1>
-		<form>
-			<input id = "message" type="text" placeholder="message">
-			<input type="button" id="send" value="Send">
-		</form>
-
-		<ul id="typing"></ul>
-		<ul id="thread"></ul>
-
-		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-		
-		<script src="js/client.js"></script>
 	</body>
 	</html>
