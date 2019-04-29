@@ -32,8 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	socketPath: "/var/run/mysqld/mysqld.sock",
-	// socketPath: "",
+	// socketPath: "/var/run/mysqld/mysqld.sock",
+	socketPath: "",
 	debug: false
 });
 
@@ -401,7 +401,6 @@ function mailMatched(prof_id, item_id, table) {
 
 function readMatches() {
 	var sql_com_rdmatch = 'SELECT * FROM matches'
-	// var text = ""
 
 	db.query(sql_com_rdmatch, function(err, result) {
 		result.forEach(function(value, index, array) {
@@ -466,13 +465,30 @@ function insertComponent(req, table, otherTable, userId){
 	var batch_quantities = [];
 	var batch_items = [];
 	var batch_remarks = [];
+
 	var counter = 0;
+	const length = Object.keys(req.body).length
 
 	var batchName = req.body["batchName"]
+	var batchNameExisting = req.body["batchname"]
+	var batch_name = "";
+
+	if (batchName != null) {
+		batch_name = batchName
+	}
+	else {
+		batchName = ""
+	}
+
+	if (batchNameExisting != null) {
+		batch_name = batchNameExisting
+		console.log(batch_name)
+	}
 
 	for (description in req.body){
 		counter += 1;
 		desc = description.slice(0, description.length-1)
+
 		if (desc == 'Quan'){
 			item = "";
 			quantity = req.body[description];
@@ -497,11 +513,11 @@ function insertComponent(req, table, otherTable, userId){
 				//If request has a batchname
 				if (/\S/.test(batchName)) {
 					batch_quantities.push(quantity)
-					batch_items.push(items)
+					batch_items.push(item)
 					batch_remarks.push(remarks)
 				}
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id, batchname) VALUES (?, ?, ?, ?, ?)";
-				sql_com_values = [quantity, item, remarks, userId, batchName]
+				sql_com_values = [quantity, item, remarks, userId, batch_name]
 			}
 			else{
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id) VALUES (?, ?, ?, ?)";
@@ -511,14 +527,14 @@ function insertComponent(req, table, otherTable, userId){
 			mysql_con.query(sql_com_addcomp, sql_com_values, function(err, result){
 				if (err) throw err;
 				log = "1 record inserted into " + table + " for " + userId;
-				console.log(result.insertId);
-				matchingAlgorithm(compType, compDesc, otherTable, userId, result.insertId)
+				console.log(log);
+				matchingAlgorithm(quantity, remarks, otherTable, userId, result.insertId)
 			})
 		}
 
-		if (counter == req.body.lengt && /\S/.test(batchName)) {
+		if (counter == length && /\S/.test(batchName)) {
 			var sql_com_addbatch = "INSERT INTO batches (batchname, quantities, items, remarks) VALUES (?, ?, ?, ?)"
-			var sql_com_addbatch_values = [batchName, batch_quantities, batch_items, batch_remarks]
+			var sql_com_addbatch_values = [batchName, batch_quantities.toString(), batch_items.toString(), batch_remarks.toString()]
 			mysql_con.query(sql_com_addbatch, sql_com_addbatch_values, function(err, result) {
 				if (err) throw err;
 				console.log("Batch " + batchName + " has been added to batches");
@@ -574,42 +590,61 @@ io.on("connection", function(client){
 });
 
 app.get('/batches', function(req, res) {
-	var sql_com_batches = "SELECT DISTINCT batchname FROM request WHERE batchname <> ''"
-	var sql_com_items = "SELECT * FROM request where batchname = ?"
+	var sql_com_batches = "SELECT * FROM batches"
+
 	var batches = [];
 	var quantities =[];
 	var items = [];
 	var remarks = [];
 
 	db.query(sql_com_batches, function(err, result){
+		//Read for each batch
 		result.forEach(function(value, index, array) {
-			db.query(sql_com_items, value.batchname, function(err2, result2) {
-				batches.push(value.batchname)
-				result2 = readRemarks(result2)
-				var quantities_batch = [];
-				var items_batch = [];
-				var remarks_batch = [];
-				result2.forEach(function(value2, index2, array2) {
-					quantities_batch.push(value2.quantity)
-					items_batch.push(value2.item)
-					remarks_batch.push(value2.remarks)
+			
+			batches.push(value.batchname)
 
-					if(array2.length == index2 + 1) {
-						quantities.push(quantities_batch)
-						items.push(items_batch)
-						remarks.push(remarks_batch)
-						// console.log(remarks_batch)
+			var quantities_batch = [];
+			var items_batch = [];
+			var remarks_batch = [];
 
-						if(array.length == index + 1) {
-							res.render('pages/batches', {
-								batches: batches,
-								items: items,
-								quantities: quantities,
-								remarks: remarks
-							})
-						}
-					}
+			// console.log(value)
+			value.items.split(',').forEach(function(value2, index2, array2) {
+				var new_remarks = []
+
+				var cur_remarks = value.remarks.split('}')[index2]
+				if (cur_remarks[0] == ',') {
+					cur_remarks = cur_remarks.slice(1)
+				}
+				cur_remarks += '}'
+
+				cur_remarks_json = JSON.parse(cur_remarks)
+				cur_remarks_keys = Object.keys(cur_remarks_json)
+
+				cur_remarks_keys.forEach(function(value3, index3, array3) {
+					new_remarks.push(value3 + ': ' + cur_remarks_json[value3])
+					
 				})
+
+				quantities_batch.push(value.quantities.split(',')[index2])
+				items_batch.push(value2)
+				remarks_batch.push(new_remarks)
+
+				// console.log(quantities_batch)
+
+				if(array2.length == index2 + 1) {
+					quantities.push(quantities_batch)
+					items.push(items_batch)
+					remarks.push(remarks_batch)
+
+					if(array.length == index + 1) {
+						res.render('pages/batches', {
+							batches: batches,
+							items: items,
+							quantities: quantities,
+							remarks: remarks
+						})
+					}
+				}
 			})
 		})
 
