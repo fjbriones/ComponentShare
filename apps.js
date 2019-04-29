@@ -561,7 +561,7 @@ io.on("connection", function(client){
 					if(err){
 						throw err;
 					}else{
-						request = result1[0].user_id;
+						request_id = result1[0].user_id;
 						client.emit("matchid", {own_id:  owner_id, req_id: request_id });
 					}
 				});
