@@ -25,7 +25,7 @@
 			var msg = "Push notification enabled";
 			$("#notifs").append('<li>' + msg+'</li>');
 			console.log(msg);
-			console.log("username is" + <%= username %>)
+			console.log(<%= username %>)
 			socket.emit('join', <%= username %>);
 
 		});
