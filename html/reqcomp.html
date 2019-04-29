@@ -8,33 +8,35 @@
 <!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
 <head>
 <meta charset="utf-8">
-<title>Component Share - Add Requests</title>
+<title>Component Share - Request New Component</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 
 <div class="container">
     <section id="content">
-       <form action="home.html">
-            <h1>Add Requests</h1>
+       <form action="new_success.html">
+            <h1>Request New Component</h1>
             <div>
-                <input type="text" placeholder="Component Name" required="" id="componet" />
+                <input type="text" placeholder="Component Type (Resistor/ Inductor/ IC/ etc)" required="" id="new_type" />
             </div>
             <div>
-                <input type="text" placeholder="Quantity" required="" id="quantity" />
+                <input type="text" placeholder="Component Name" required="" id="new_component" />
             </div>
             <div>
-                <input type="text" placeholder="Voltage Rating" required="" id="rating" />
+                <input type="text" placeholder="Component Value" id="new_value" />
             </div>
             <div>
-                <input type="text" placeholder="Wattage" required="" id="wattage" />
+                <input type="text" placeholder="Datasheet Link" id="new_datasheet" />
             </div>
             <div>
-                <input type="text" placeholder="Others" required="" id="others" />
+                <input type="text" placeholder="Description" id="new_description" />
+            </div>
+            <div>
+                <input type="text" placeholder="Other Info" id="new_others" />
             </div>
             <div>
                 <input type="submit" value="Request" />
-                <a href="reqcomp.html">Component not in the list? Request new component here</a>
             </div>
         
         </form> <!-- form -->
