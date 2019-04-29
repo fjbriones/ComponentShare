@@ -7,8 +7,11 @@ var promise = require('promise')
 var session = require('express-session')
 var fs = require('fs')
 var nodemailer = require('nodemailer');
+var redis = require('redis');
 
 var app = express();
+var server = app.listen(3000);
+var io = require("socket.io").listen(server);
 
 var transporter = nodemailer.createTransport({
 	service: 'gmail',
@@ -29,6 +32,9 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
+	// socketPath: "/var/run/mysqld/mysqld.sock",
+	socketPath: "",
+	debug: false
 });
 
 fs.readFile(__dirname + '/public/js/components.json', function(err, data){
@@ -58,8 +64,7 @@ mysql_con.connect(function(err){
 	});
 
 	console.log('Looking for table inventory.');
-	// let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,i_quantity int(11),i_item varchar(45),	i_resistance varchar(45), i_RESwattage varchar(45),i_capacitance varchar(45),i_CAPtype varchar(45),i_CAPvoltage varchar(45),i_ICnum varchar(45),i_ICpackage varchar(45),i_LEDcolor varchar(45),	i_LEDsize varchar(45),i_MISCname varchar(100),i_remarks text)";
-	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text)";
+	let createInventory = "CREATE TABLE IF NOT EXISTS inventory(inv_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL,FOREIGN KEY fk_inventory(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text, category tinyint(1) default 0)";
 	mysql_con.query(createInventory, function(err, results, fields){
 		if(err){
 			console.log(err.message);
@@ -67,18 +72,33 @@ mysql_con.connect(function(err){
 	});
 
     console.log('Looking for table request.');
-	// let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, r_quantity int(11), r_item varchar(45),r_resistance varchar(45),r_RESwattage varchar(45),	r_capacitance varchar(45),r_CAPtype varchar(45),r_CAPvoltage varchar(45),r_ICnum varchar(45),r_ICpackage varchar(45),r_LEDcolor varchar(45),r_LEDsize varchar(45),r_MISCname varchar(100),r_remarks text)";
-	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text, batchname varchar(50))";
+	let createRequest =  "CREATE TABLE IF NOT EXISTS request(req_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, profile_id INT NOT NULL, FOREIGN KEY fk_request(profile_id) REFERENCES usrprofiles(profile_id),timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, quantity int(11), item varchar(45), remarks text , category tinyint(1) default 1, batchname varchar(50))";
 	mysql_con.query(createRequest, function(err, results, fields){
         if(err){
             console.log(err.message);
         }
     });
 
+	console.log('Looking for table batches.');
+	let createBatches =  "CREATE TABLE IF NOT EXISTS batches(batch_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, batchname varchar(50) UNIQUE, quantities TEXT, items TEXT, remarks LONGTEXT)";
+	mysql_con.query(createBatches, function(err, results, fields){
+        if(err){
+            console.log(err.message);
+        }
+    });    
+
 	console.log('Looking for table matches.');
-	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE)";
+	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE, done tinyint(1) default 0)";
 	mysql_con.query(createMatches, function(err, results, fields) {
 		if(err) {
+			console.log(err.message);
+		}
+	})
+
+	console.log('Looking for table messages')
+	let createMessages = "CREATE TABLE IF NOT EXISTS messages(msg_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, user_from VARCHAR(40), user_to VARCHAR(40), message text)";
+	mysql_con.query(createMessages, function(err, results, fields){
+		if(err){
 			console.log(err.message);
 		}
 	})
@@ -138,7 +158,12 @@ function readRemarks(database) {
 		remarksKeys.forEach(function(value2, index2) {
 			// if (index2 > 0)
 			// 	newRemarks += "\n"
+			if (index2 == 0){
+				newRemarks.push(remarks[value2])
+			}
+			else {
 			newRemarks.push(value2 + ": " + remarks[value2])
+			}
 		})
 		data[index].remarks = newRemarks
 		// console.log(data[index].remarks)
@@ -149,9 +174,11 @@ function readRemarks(database) {
 app.get('/home', function(req, res){
 	var userId = req.session.userId;
 	var username = req.session.username;
+	io.sockets.emit('user', username);
+	//io.sockets.broadcast.emit('user', username);
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
-	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
+	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks, category FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
 
 	var inventory;
 	var request;
@@ -181,6 +208,7 @@ app.get('/home', function(req, res){
 				request = readRemarks(request)
 				feed = readRemarks(feed)
 				res.render('pages/home', {
+					userId:  userId,
 					username: username,
 					inventory: inventory,
 					request: request,
@@ -237,7 +265,6 @@ app.post('/deleteinventory', function(req, res){
 		}
 	})
 })
-
 
 app.get('/signup', function (req, res) {
 	var prompt = "";
@@ -308,7 +335,15 @@ app.get('/addinv', function(req, res) {
 app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
+app.get('/chat', function(req,res){
+	var cur_uname = req.session.username;
+	console.log("User is " + cur_uname);
+	io.sockets.emit("currentuser", cur_uname);
+	//io.broadcast.emit("currentuser", cur_uname);
+	res.render('pages/chat');
+})
 
+//Configurable text for the mail
 function mailText(firstName, item, remarks, table) {
 	var remarksJSON = JSON.parse(remarks)
 	var descriptors = Object.keys(remarksJSON)
@@ -341,11 +376,11 @@ function mailMatched(prof_id, item_id, table) {
 	}
 	// console.log("Sending email...")
 	var sql_com_item_desc = 'SELECT * FROM ' + table + ' WHERE ' + idKey + ' = ' + item_id;
-	var sql_com_prof = 'SELECT * FROM usrprofiles';
+	var sql_com_prof = 'SELECT * FROM usrprofiles WHERE profile_id = (?)';
 	var email;
 	var firstName;
 
-	db.query(sql_com_prof, function(err, result) {
+	db.query(sql_com_prof, prof_id, function(err, result) {
 		if (err) throw err;
 		email = result[0].email;
 		firstName = result[0].fname;
@@ -361,7 +396,7 @@ function mailMatched(prof_id, item_id, table) {
 			}
 			transporter.sendMail(mailOptions, function(err3, info) {
 				if (err3) throw err3;
-				console.log('Email sent: ' + info.response)
+				console.log('Email sent to '+ email + ': ' + info.response)
 			})
 		})
 	})
@@ -383,8 +418,9 @@ function readMatches() {
 
 //The Matching Algorithm
 function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
-	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? ORDER BY timestamp ASC';
-	var sql_com_values = [compType, compDesc];
+
+	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? AND profile_id != ? ORDER BY timestamp ASC';
+	var sql_com_values = [compType, compDesc, userId];
 	var req_id;
 	var req_prof_id;
 	var inv_id;
@@ -454,6 +490,9 @@ function insertComponent(req, table, otherTable, userId){
 
 			if (table =='request'){
 				batchName = req.body["batchName"]
+				if (/\S/.test(batchName)) {
+					console.log("Batchname: " + batchName)
+				}
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id, batchname) VALUES (?, ?, ?, ?, ?)";
 				sql_com_values = [quantity, compType, compDesc, userId, batchName]
 			}
@@ -483,6 +522,56 @@ app.post('/addinv', function(req, res) {
 	insertComponent(req, "inventory", "request", userId)
 	res.redirect('/home') 
 })
+
+//initiatie socket connection server side
+//connection is initiated on homepage and chat page visit refer to home.ejs script and public/client.js
+
+io.on("connection", function(client){ 
+	//push notification function
+	console.log("User connected " + client.id);
+	client.emit('connected');
+    //create user push notif redis channel
+	client.on('join', function(userId){
+		const channel = 'push:notifications:' + userId;
+		console.log('Connecting to redis: ' +channel);
+		client.redisClient = redis.createClient();
+		client.redisClient.subscribe(channel);
+
+			//handle messages from client
+			client.redisClient.on('message', (channel, message) => {
+			console.log(channel + ': ' + message);
+			client.emit('notification', channel, message);
+		});
+	});
+
+	//code block for chat sequence - ** needs to be separated from push notification connection
+
+	var owner;
+	var request;
+	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
+	var sql_com_searcher =  "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
+	mysql_con.query(sql_com_owner, function(err,result, fields){
+		if(err){
+			throw err;
+		}else{
+			if (result.length > 0) {
+				owner = result[0].uname;
+				client.emit("own", owner);
+				mysql_con.query(sql_com_searcher, function(err,result1, fields){
+					if(err){
+						throw err;
+					}else{
+						request = result1[0].uname;
+						client.emit("req", request);
+					}
+				});
+			}
+		}
+	});
+	
+	
+	
+});
 
 app.get('/batches', function(req, res) {
 	var sql_com_batches = "SELECT DISTINCT batchname FROM request WHERE batchname <> ''"
@@ -520,20 +609,19 @@ app.get('/batches', function(req, res) {
 							})
 						}
 					}
-					// console.log(value.batchname)
-					// console.log(value2.quantity)
-					// console.log(value2.item)
-					// console.log(value2.remarks)
-					// batches_json += ""
 				})
-				// console.log(batches_json)
-				// console.log(result2)
-				// console.log(result2.items)
-				// console.log(result2.remarks)
 			})
 		})
 
 	})
 })
 
-app.listen(port);
+app.get('/profile', function(req, res) {
+	res.render('pages/profile')
+})
+
+app.get('/chat', function(req, res) {
+	res.render('pages/chat')
+})
+
+// app.listen(port);

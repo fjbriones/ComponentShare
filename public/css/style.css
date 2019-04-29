@@ -51,6 +51,7 @@ form:after {
     visibility: hidden;
 }
 .container { margin: 25px auto; position: relative; width: 900px; }
+.col {margin: 25px;}
 #content {
     background: #f9f9f9;
     background: -moz-linear-gradient(top,  rgba(248,248,248,1) 0%, rgba(249,249,249,1) 100%);
@@ -321,7 +322,7 @@ form:after {
   width: 0;
   position: fixed;
   z-index: 1;
-  height: 500px;
+  /*height: 500px;*/
   top: 0;
   left: 0;
   background-color: #111;
@@ -377,9 +378,9 @@ ul {
 
 ul li {
   border: 1px solid #ddd;
-  margin-top: -1px; /* Prevent double borders */
+  margin-top: -1px;  /*Prevent double borders */
   background-color: #c4c4c4;
-  padding: 12px;
+  /*padding: 12px;*/
   text-decoration: none;
   font-size: 18px;
   color: black;
@@ -792,7 +793,6 @@ ul li:hover {
 
 /* end of collapsibles */
 
-/* form text area */
 #content form textarea{
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -830,7 +830,10 @@ ul li:hover {
 }
 /* end of form text area */
 
-
+.form-row {
+  padding: 0px;
+  margin: 0px;
+}
 
 
 
