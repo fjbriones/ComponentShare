@@ -621,8 +621,8 @@ app.get('/profile', function(req, res) {
 	res.render('pages/profile')
 })
 
-app.get('/chat', function(req, res) {
-	res.render('pages/chat')
-})
+// app.get('/chat', function(req, res) {
+// 	res.render('pages/chat')
+// })
 
 // app.listen(port);
