@@ -80,7 +80,7 @@ mysql_con.connect(function(err){
     });
 
 	console.log('Looking for table batches.');
-	let createBatches =  "CREATE TABLE IF NOT EXISTS batches(batch_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, batchname varchar(50) UNIQUE, quantities TEXT, items TEXT, remarks LONGTEXT)";
+	let createBatches =  "CREATE TABLE IF NOT EXISTS batches(batch_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, batchname varchar(50), quantities TEXT, items TEXT, remarks LONGTEXT)";
 	mysql_con.query(createBatches, function(err, results, fields){
         if(err){
             console.log(err.message);
@@ -459,46 +459,53 @@ function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 	})
 }
 
+
 function insertComponent(req, table, otherTable, userId){
 	var quantity;
 	var number;
-	var compType;
-	var compDesc;
+	var item;
+	var remarks;
+
+	var batch_quantities = [];
+	var batch_items = [];
+	var batch_remarks = [];
 
 	for (description in req.body){
 		desc = description.slice(0, description.length-1)
 		if (desc == 'Quan'){
-			compDesc = "";
+			item = "";
 			quantity = req.body[description];
 			number = description[description.length-1];
 		}
 		else if(desc == "compType"){
-			compType = req.body[description]
+			item = req.body[description]
 			var compDescList = Object.keys(components[compType])
 
-
-			compDesc = '{'
+			remarks = '{'
 			compDescList.forEach(function(value, index) {
 				if (index > 0)
-					compDesc += ','
-				compDesc += ' "' + value + '" : "' + req.body[value + number] + '"'
+					remarks += ','
+				remarks += ' "' + value + '" : "' + req.body[value + number] + '"'
 			})
-			compDesc += ' }'
+			remarks += ' }'
 
 			var sql_com_addcomp;
 			var sql_com_values;
 
 			if (table =='request'){
 				batchName = req.body["batchName"]
+				//If request has a batchname
 				if (/\S/.test(batchName)) {
-					console.log("Batchname: " + batchName)
+					batch_quantities.push(quantity)
+					batch_items.push(items)
+					batch_remarks.push(remarks)
 				}
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id, batchname) VALUES (?, ?, ?, ?, ?)";
-				sql_com_values = [quantity, compType, compDesc, userId, batchName]
+				sql_com_values = [quantity, item, remarks, userId, batchName]
 			}
 			else{
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id) VALUES (?, ?, ?, ?)";
-				sql_com_values = [quantity, compType, compDesc, userId]
+				sql_com_values = [quantity, item, remarks, userId]
 			}
 						 
 			mysql_con.query(sql_com_addcomp, sql_com_values, function(err, result){
