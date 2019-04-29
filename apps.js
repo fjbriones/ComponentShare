@@ -177,10 +177,13 @@ app.get('/home', function(req, res){
 	var sql_com_inventory = "SELECT * FROM inventory WHERE profile_id='"+userId+"'";
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
 	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks, category FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
+	var sql_com_match = "SELECT * FROM matches WHERE inv_profile_id='"+userId+"' OR req_profile_id='"+userId+"'";
 
 	var inventory;
 	var request;
 	var feed;
+	var matches;
+
 	mysql_con.query(sql_com_inventory, function(err, result, fields){
 		if (err) {
 			inventory = [];
@@ -202,17 +205,25 @@ app.get('/home', function(req, res){
 				else {
 					feed = result3;
 				}
-				inventory = readRemarks(inventory)
-				request = readRemarks(request)
-				feed = readRemarks(feed)
-				res.render('pages/home', {
-					userId:  userId,
-					username: username,
-					inventory: inventory,
-					request: request,
-					feed: feed
+				mysql_con.query(sql_com_match, function(err4, result4, fields4){
+					if(err) {
+						matches = [];
+					}
+					else {
+						matches = result4;
+					}
+					inventory = readRemarks(inventory)
+					request = readRemarks(request)
+					feed = readRemarks(feed)
+					res.render('pages/home', {
+						userId:  userId,
+						username: username,
+						inventory: inventory,
+						request: request,
+						feed: feed,
+						matches: JSON.stringify(matches)
+					})
 				})
-				readMatches()
 			})
 		})
 	})
@@ -233,7 +244,6 @@ app.get('/logout', function(req, res){
 
 app.post('/deleterequest', function(req, res){
 	var sql_com_delreq = "DELETE FROM request where req_id=?";
-	console.log(req.body)
 	mysql_con.query(sql_com_delreq, [parseInt(req.body.req_id, 10)], function(err, result){
 		if (err)
 		{
@@ -249,7 +259,6 @@ app.post('/deleterequest', function(req, res){
 })
 app.post('/deleteinventory', function(req, res){
 	var sql_com_delinv = "DELETE FROM inventory where inv_id=?";
-	console.log(req.body)
 	mysql_con.query(sql_com_delinv, [parseInt(req.body.inv_id, 10)], function(err, result){
 		if (err)
 		{
@@ -381,6 +390,7 @@ function mailMatched(prof_id, item_id, table) {
 
 	db.query(sql_com_prof, prof_id, function(err, result) {
 		if (err) throw err;
+		console.log(prof_id)
 		email = result[0].email;
 		firstName = result[0].fname;
 		// console.log(email)
@@ -415,50 +425,79 @@ function readMatches() {
 }
 
 //The Matching Algorithm
-function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
+async function matchingAlgorithm(compType, compDesc, otherTable, userId, curId) {
 
-	var sql_com_match = 'SELECT * FROM ' + otherTable + ' WHERE item = ? AND remarks = ? AND profile_id != ? ORDER BY timestamp ASC';
+	var other_id_name = otherTable.slice(0,3) + "_id"
+	var other_id;
+
+	var sql_com_matched = "SELECT * FROM matches WHERE " + other_id_name + " = (?)"
+	var sql_com_match = "SELECT * FROM " + otherTable + " WHERE item = ? AND remarks = ? AND NOT profile_id = ? ORDER BY timestamp ASC";
 	var sql_com_values = [compType, compDesc, userId];
 	var req_id;
 	var req_prof_id;
 	var inv_id;
 	var inv_prof_id;
 
+	
 	db.query(sql_com_match, sql_com_values, function(err, result){
 		if(err) {
 			console.log("No match")
+			return 0;
 		}
-		else {
-			if (result.length > 0) {
-				console.log("Found a match for " + userId + " with " + result[0].profile_id)
-				if (otherTable == 'request') {
-					req_id = result[0].req_id;
-					req_prof_id = result[0].profile_id;
-					inv_id = curId;
-					inv_prof_id = userId;
+		if (result.length > 0) {
+			console.log(result)
+			if (otherTable == 'request') {
+				other_id = result[0].req_id;
+			}
+			else {
+				other_id = result[0].inv_id;
+			}
+
+			db.query(sql_com_matched, other_id, function(err2, result2) {
+				if (err2) throw err2;
+				if (result2.length == 0) {
+					// console.log(result)
+					console.log("Found a match for " + userId + " with " + result[0].profile_id)
+					if (otherTable == 'request') {
+						req_id = result[0].req_id;
+						req_prof_id = result[0].profile_id;
+						inv_id = curId;
+						inv_prof_id = userId;
+					}
+					else {
+						req_id = curId;
+						req_prof_id = userId;
+						inv_id = result[0].inv_id;
+						inv_prof_id = result[0].profile_id;
+					}			
+					var sql_com_match_insert = 'INSERT INTO matches (inv_profile_id, inv_id, req_profile_id, req_id) VALUES (?, ?, ?, ?)';
+					var sql_com_match_values = [inv_prof_id, inv_id, req_prof_id, req_id];
+
+					db.query(sql_com_match_insert, sql_com_match_values, function(err2, result2) {
+						if (err) throw err;
+						console.log("1 record inserted into matches");
+						mailMatched(req_prof_id, req_id, "request");
+						mailMatched(inv_prof_id, inv_id, "inventory");
+						return 0;
+					})
 				}
 				else {
-					req_id = curId;
-					req_prof_id = userId;
-					inv_id = result[0].inv_id;
-					inv_prof_id = result[0].profile_id;
-				}			
-				var sql_com_match_insert = 'INSERT INTO matches (inv_profile_id, inv_id, req_profile_id, req_id) VALUES (?, ?, ?, ?)';
-				var sql_com_match_values = [inv_prof_id, inv_id, req_prof_id, req_id];
-
-				db.query(sql_com_match_insert, sql_com_match_values, function(err2, result2) {
-					if (err) throw err;
-					console.log("1 record inserted into matches");
-					mailMatched(req_prof_id, req_id, "request");
-					mailMatched(inv_prof_id, inv_id, "inventory");
-				})
-			}
+					return 0;
+				}
+			})
+		}
+		else {
+			console.log('No match for ' + curId)
+			return 0;
 		}
 	})
 }
 
+function delay() {
+	return new Promise(resolve => setTimeout(resolve, 50));
+}
 
-function insertComponent(req, table, otherTable, userId){
+async function insertComponent(req, table, otherTable, userId){
 	var quantity;
 	var number;
 	var item;
@@ -486,12 +525,13 @@ function insertComponent(req, table, otherTable, userId){
 		batch_name = batchNameExisting
 		console.log(batch_name)
 	}
-
-	for (description in req.body){
+	descriptor_list = Object.keys(req.body)
+	for (description in req.body) {
 		counter += 1;
 		desc = description.slice(0, description.length-1)
 
 		if (desc == 'Quan'){
+			await delay();
 			item = "";
 			quantity = req.body[description];
 			number = description[description.length-1];
@@ -526,11 +566,12 @@ function insertComponent(req, table, otherTable, userId){
 				sql_com_values = [quantity, item, remarks, userId]
 			}
 						 
-			mysql_con.query(sql_com_addcomp, sql_com_values, function(err, result){
+			await mysql_con.query(sql_com_addcomp, sql_com_values, async function(err, result){
 				if (err) throw err;
-				log = "1 record inserted into " + table + " for " + userId;
+				log = "1 " + item + " record inserted into " + table + " for " + userId;
 				console.log(log);
-				matchingAlgorithm(quantity, remarks, otherTable, userId, result.insertId)
+
+				await matchingAlgorithm(item, remarks, otherTable, userId, result.insertId)
 			})
 		}
 
@@ -545,15 +586,15 @@ function insertComponent(req, table, otherTable, userId){
 	}
 }
 
-app.post('/addreq', function(req, res) {
+app.post('/addreq', async function(req, res) {
 	var userId = req.session.userId;
-	insertComponent(req, "request", "inventory", userId)
+	await insertComponent(req, "request", "inventory", userId)
 	res.redirect('/home')
 })
 
-app.post('/addinv', function(req, res) {
+app.post('/addinv', async function(req, res) {
 	var userId = req.session.userId;
-	insertComponent(req, "inventory", "request", userId)
+	await insertComponent(req, "inventory", "request", userId)
 	res.redirect('/home') 
 })
 
