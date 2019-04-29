@@ -584,10 +584,25 @@ io.on("connection", function(client){
 			}
 		}
 	});
-	
-	
-	
+	client.on("messages", function(data){
+		console.log(data);
+		client.emit("thread", data);
+		client.broadcast.emit("thread", data);
+		db.query("INSERT INTO `message` (`user_from`, `user_to`, `message`) VALUES ('"+data.user_id+"', '"+data.user_to+"', '"+data.message+"' )");
+	});
+
+	client.on('is_typing', function(data){
+		console.log(data);
+		if(data.status === true){
+			client.emit("typing", data);
+			client.broadcast.emit('typing', data);
+		}else {
+			client.emit("typing", data);
+			client.broadcast.emit('typing', data);
+		}
+	});
 });
+	
 
 app.get('/batches', function(req, res) {
 	var sql_com_batches = "SELECT * FROM batches"

@@ -5,14 +5,13 @@
 		<link rel="stylesheet" href="style.css"/>
 		 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
    		 <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
-    
    		 <script>
    		 	//initiate socket connection
 			var socket = io.connect('http://10.158.3.101:3000');
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
-		socket.on("matchid", function(data){
+			socket.on("matchid", function(data){
 				console.log(curUserId);
 				console.log("owner id: " + data.own_id);
 				console.log("req id: " + data.req_id);
@@ -54,6 +53,7 @@
 
 			//emit form contents to socket
 			$("#send").click(function(){
+				console.log('pressed');
 				var user_id = $("#user_id").val();
 				var username = $("#username").val();
 				var user_to = $("#user_to").val();
@@ -98,16 +98,6 @@
 				}
 			});
 
-			//$("#saveID").click(function(){
-			//	var val = $("#user_id").val();
-			//	var his = $("#user_to").val();
-			//	myID = val;
-			//	hisID = his;
-			//});
-				
-
-
-
    		 </script>
 	</head>
 	<body>
@@ -122,10 +112,5 @@
 
 		<ul id="typing"></ul>
 		<ul id="thread"></ul>
-
-		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-		
-		<script src="js/client.js"></script>
 	</body>
 	</html>

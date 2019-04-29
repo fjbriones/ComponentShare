@@ -5,46 +5,6 @@
 	<% include ../partials/head %>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
-	
-	<!-- <script type="text/javascript">
-		
-		//initiate socket connection on page load
-		var socket = io.connect('http://10.158.3.101:3000');
-		// var socket = io.connect('http://localhost:3000');
-		//check if current user is received **to be removed in the future
-		// socket.on('user', function(data){
-		// 	$("#notifs").append('<li>Connecting</li>');
-		// 	console.log("user received");
-		// 	console.log(<%= username %>)
-		// 	var userId = <%= userId %>;
-
-		// });
-
-		//connect user and create redis channel
-		socket.on('connected', function(){
-			var msg = "Push notification enabled";
-			$("#notifs").append('<li>' + msg+'</li>');
-			console.log(msg);
-			console.log(String(<%= username %>))
-			socket.emit('join', String(<%= username %>));
-
-		});
-
-		//handle processed notification in the server
-		socket.on('notification', function(channel, notification){
-			console.log(channel + ': ' + notification);
-			$("#notifs").append('<li>' + channel + ':' + notification+'</li>');
-		});
-
-	</script> -->
-
-	<script>
-		function timedRefresh(timeoutPeriod) {
-			setTimeout("location.reload(true);",timeoutPeriod);
-		}
-
-		window.onload = timedRefresh(60000);
-	</script>
 
 </head>
 
@@ -111,60 +71,27 @@
 				</div>
 				<div>
 					<ul>
-						<% var cur_batch = "" %>
-						<% var batchnumber = 0 %>
-						<% request.forEach(function(req, i, array) { %>
-							<% if (/\S/.test(req.batchname)) { %>
-								<% if (req.batchname != cur_batch) { %>
-									<% if (cur_batch != "") { %>
-										</ul>
-										</div>
-									</li>
-									<% } %>
-									<% cur_batch = req.batchname %>
-									<% batchnumber += 1 %>
-									<li>
-										<button class="collapsible" data-toggle="collapse" data-target="#collapsebatch<%= batchnumber %>"><%= cur_batch %></button>
-										<div id="collapsebatch<%= batchnumber %>" class="collapse">
-											<ul>
-												<li>
-								<% } else { %> 
-												<li>
-								<% } %>
-							<% } else { %>
-								<% if (cur_batch != "") { %> 
-									<% cur_batch = "" %>
-											</ul>
-										</div>
-									</li>
-								<% } %>
-									<li>
-							<% } %>
-
-							<div>
-								<form id="request<%= req.req_id %>" method="post" action="/deleterequest"></form>
-							</div>
-
-							<input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
-							
-							<div>
-							<% req.remarks.forEach(function(remark, index) { %>
-								<% if (index == 0) { %> 			
-									<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= remark %> <%= req.item %></button>
-									<span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span>
-									<div id="collapsereq<%= req.req_id %>" class="collapse">
-										Quantity: <%= req.quantity %> <br>
-								<% } else { %>
-									<%= remark %> <br>
-								<% } %>
-							<% }) %>
-							</div>
-
-							<% if (/\S/.test(req.batchname)) { %>
-								</li>
-							<% } else  {%>	
-								</li>
-							<% } %>						
+						<% request.forEach(function(req) { %>
+							<li>
+								<div>
+									<form id="request<%= req.req_id %>" method="post" action="/deleterequest"></form>
+								</div>
+								<input type="hidden" id="req_id" name="req_id" value="<%= req.req_id %>" form="request<%= req.req_id %>"/>
+								<div>
+								<% req.remarks.forEach(function(remark, index) { %>
+									<% if (index == 0) { %> 			
+										<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= remark %> <%= req.item %></button>
+										<span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span>
+										<div id="collapsereq<%= req.req_id %>" class="collapse">
+											Quantity: <%= req.quantity %> <br>
+									<% } else { %>
+										<%= remark %> <br>
+									<% } %>	
+									
+								<% }) %>
+								</div>
+							</li>
+						
 						<% }); %>
           			</ul>
 				</div>
@@ -207,5 +134,10 @@
 		</div>
 	</div>
 </div>
+<div id="notifbar">
+	<h2>Notifications</h2>
+	<ul id="notifs"></ul>
 </body>
 </html>
+
+
