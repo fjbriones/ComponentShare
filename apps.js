@@ -79,6 +79,14 @@ mysql_con.connect(function(err){
         }
     });
 
+	console.log('Looking for table batches.');
+	let createBatches =  "CREATE TABLE IF NOT EXISTS batches(batch_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, batchname varchar(50) UNIQUE, quantities TEXT, items TEXT, remarks LONGTEXT)";
+	mysql_con.query(createBatches, function(err, results, fields){
+        if(err){
+            console.log(err.message);
+        }
+    });    
+
 	console.log('Looking for table matches.');
 	let createMatches = "CREATE TABLE IF NOT EXISTS matches(match_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, inv_profile_id INT NOT NULL, FOREIGN KEY fk_inv_profile(inv_profile_id) REFERENCES usrprofiles(profile_id), inv_id INT NOT NULL, FOREIGN KEY fk_inv_matches(inv_id) REFERENCES inventory(inv_id) ON DELETE CASCADE, req_profile_id INT NOT NULL, FOREIGN KEY fk_req_profile(req_profile_id) REFERENCES usrprofiles(profile_id), req_id INT NOT NULL, FOREIGN KEY fk_req_matches(req_id) REFERENCES request(req_id) ON DELETE CASCADE, done tinyint(1) default 0)";
 	mysql_con.query(createMatches, function(err, results, fields) {
@@ -335,6 +343,7 @@ app.get('/chat', function(req,res){
 	res.render('pages/chat');
 })
 
+//Configurable text for the mail
 function mailText(firstName, item, remarks, table) {
 	var remarksJSON = JSON.parse(remarks)
 	var descriptors = Object.keys(remarksJSON)
@@ -481,6 +490,9 @@ function insertComponent(req, table, otherTable, userId){
 
 			if (table =='request'){
 				batchName = req.body["batchName"]
+				if (/\S/.test(batchName)) {
+					console.log("Batchname: " + batchName)
+				}
 				sql_com_addcomp = "INSERT INTO " + table + " (quantity, item, remarks, profile_id, batchname) VALUES (?, ?, ?, ?, ?)";
 				sql_com_values = [quantity, compType, compDesc, userId, batchName]
 			}
