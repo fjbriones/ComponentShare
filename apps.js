@@ -32,8 +32,8 @@ var mysql_con = mysql.createConnection({
 	user: "componentshare",
 	password: "134compshare",
 	database: "userdb",
-	// socketPath: "/var/run/mysqld/mysqld.sock",
-	socketPath: "",
+	socketPath: "/var/run/mysqld/mysqld.sock",
+	// socketPath: "",
 	debug: false
 });
 
