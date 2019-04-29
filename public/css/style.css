@@ -614,15 +614,18 @@ ul li:hover {
   margin: 10px 0;
 
   position: relative;
-  left: 275px;
-  width: 700px;
+  /*left: 275px;
+  width: 700px;*/
+
+  right: -10px;
+  width: 900px;
 
 }
 
 /* Darker chat container */
 .chat-peer {
   border-color: #ccc;
-  background-color: #ccc;
+  background-color: #bbb;
 
   border-radius: 5px;
   padding: 10px;
@@ -630,7 +633,7 @@ ul li:hover {
 
   position: relative;
   right: -10px;
-  width: 700px;
+  width: 950px;
 }
 
 .form-chat {
