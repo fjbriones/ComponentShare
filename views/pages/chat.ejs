@@ -12,9 +12,7 @@
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
-			//on page load emit mathced string to enable chat
-
-			socket.on("matchid", function(data){
+		socket.on("matchid", function(data){
 				console.log(curUserId);
 				console.log("owner id: " + data.own_id);
 				console.log("req id: " + data.req_id);
