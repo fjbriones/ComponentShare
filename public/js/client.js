@@ -3,8 +3,7 @@ var socket = io.connect('http://10.158.3.101:3000');
 var myID = 0;
 var hisID = 0;
 //on page load emit mathced string to enable chat
-socket.emit("matched");
-//need to check if owner id is the current user
+
 socket.on("own", function(data){
 	console.log(data);
 	$("#user_id").val(data);
@@ -20,10 +19,6 @@ socket.on("req", function(data){
 	hisID = data;
 });
 
-
-socket.on("currentuser", function(data){ //check lang
-	console.log("current user: " +data);
-});
 
 //handle loaded data from message database
 socket.on("thread", function(data) {
