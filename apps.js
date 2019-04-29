@@ -469,8 +469,12 @@ function insertComponent(req, table, otherTable, userId){
 	var batch_quantities = [];
 	var batch_items = [];
 	var batch_remarks = [];
+	var counter = 0;
+
+	var batchName = req.body["batchName"]
 
 	for (description in req.body){
+		counter += 1;
 		desc = description.slice(0, description.length-1)
 		if (desc == 'Quan'){
 			item = "";
@@ -479,7 +483,7 @@ function insertComponent(req, table, otherTable, userId){
 		}
 		else if(desc == "compType"){
 			item = req.body[description]
-			var compDescList = Object.keys(components[compType])
+			var compDescList = Object.keys(components[item])
 
 			remarks = '{'
 			compDescList.forEach(function(value, index) {
@@ -493,7 +497,6 @@ function insertComponent(req, table, otherTable, userId){
 			var sql_com_values;
 
 			if (table =='request'){
-				batchName = req.body["batchName"]
 				//If request has a batchname
 				if (/\S/.test(batchName)) {
 					batch_quantities.push(quantity)
@@ -511,8 +514,17 @@ function insertComponent(req, table, otherTable, userId){
 			mysql_con.query(sql_com_addcomp, sql_com_values, function(err, result){
 				if (err) throw err;
 				log = "1 record inserted into " + table + " for " + userId;
-				// console.log(result.insertId);
+				console.log(result.insertId);
 				matchingAlgorithm(compType, compDesc, otherTable, userId, result.insertId)
+			})
+		}
+
+		if (counter == req.body.lengt && /\S/.test(batchName)) {
+			var sql_com_addbatch = "INSERT INTO batches (batchname, quantities, items, remarks) VALUES (?, ?, ?, ?)"
+			var sql_com_addbatch_values = [batchName, batch_quantities, batch_items, batch_remarks]
+			mysql_con.query(sql_com_addbatch, sql_com_addbatch_values, function(err, result) {
+				if (err) throw err;
+				console.log("Batch " + batchName + " has been added to batches");
 			})
 		}
 	}
