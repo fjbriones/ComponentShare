@@ -44,12 +44,13 @@
 
 				console.log(value.match_id)
 				$("#matchedList").append($('<div>', {
+					class: "card3",
 					id: "sidediv" + value.match_id
 				}))
 				$("#matchedList").append($('<form>', {
 					id: "chatform" + value.match_id,
 					action: "/chat",
-					method: "get" 
+					method: "post" 
 				}))
 				$("#sidediv"+value.match_id).append($("<input>", {
 					type: "hidden",
@@ -57,12 +58,17 @@
 					value: otherId,
 					name: "otherId"
 				}))
-				$("#sidediv"+value.match_id).append($("<button>", {
-					class: "btn btn-outline-primary btn-block",
+				$("#sidediv"+value.match_id).append($("<input>", {
+					type: "hidden",
 					form: "chatform" + value.match_id,
-					type: "submit"
-					text: otherName,
+					value: otherName,
 					name: "otherUname"
+				}))
+				$("#sidediv"+value.match_id).append($("<button>", {
+					class: "btn btn-secondary btn-block",
+					form: "chatform" + value.match_id,
+					type: "submit",
+					text: otherName
 				}))
 			})
 		})

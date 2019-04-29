@@ -353,15 +353,15 @@ app.get('/addinv', function(req, res) {
 app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
-app.get('/chat', function(req,res){
+app.post('/chat', function(req,res){
 	userId = req.session.userId;
 	uname = req.session.username;
-	console.log(req.body.otherId + " : " + req.body.otherUname)
+	console.log("Going to chat with " + req.body["otherId"] + " : " + req.body["otherUname"])
 	res.render('pages/chat', {
 		userId:  userId,
 		uname: uname,
-		otherId: req.body.otherId,
-		otherUname: req.body.otherUname
+		otherId: req.body["otherId"],
+		otherUname: req.body["otherUname"]
 	});
 });
 
