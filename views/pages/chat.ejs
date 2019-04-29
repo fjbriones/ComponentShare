@@ -26,8 +26,10 @@
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
+			var uname = "<%= uname %>";
 			socket.on("matchid", function(data){
 				console.log(curUserId);
+				console.log(uname);
 				console.log("owner id: " + data.own_id);
 				console.log("req id: " + data.req_id);
 				if(data.own_id == curUserId){
