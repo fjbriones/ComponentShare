@@ -178,6 +178,7 @@ app.get('/home', function(req, res){
 	var sql_com_request = "SELECT * FROM request WHERE profile_id='"+userId+"'";
 	var sql_com_feed = "SELECT req_id, profile_id, timestamp, quantity, item, remarks, category FROM request UNION SELECT * FROM inventory ORDER BY timestamp ASC";
 	var sql_com_match = "SELECT * FROM matches WHERE inv_profile_id='"+userId+"' OR req_profile_id='"+userId+"'";
+	var sql_com_profiles = "SELECT * FROM usrlogin"
 
 	var inventory;
 	var request;
@@ -212,16 +213,26 @@ app.get('/home', function(req, res){
 					else {
 						matches = result4;
 					}
-					inventory = readRemarks(inventory)
-					request = readRemarks(request)
-					feed = readRemarks(feed)
-					res.render('pages/home', {
-						userId:  userId,
-						username: username,
-						inventory: inventory,
-						request: request,
-						feed: feed,
-						matches: JSON.stringify(matches)
+					mysql_con.query(sql_com_profiles, function(err5, result5, fields5) {
+						if(err) {
+							profiles = [];
+						}
+						else {
+							profiles = result5;
+						}
+
+						inventory = readRemarks(inventory)
+						request = readRemarks(request)
+						feed = readRemarks(feed)
+						res.render('pages/home', {
+							userId:  userId,
+							username: username,
+							inventory: inventory,
+							request: request,
+							feed: feed,
+							matches: JSON.stringify(matches),
+							profiles: JSON.stringify(profiles)
+						})
 					})
 				})
 			})
@@ -345,9 +356,12 @@ app.get('/addreq', function(req, res) {
 app.get('/chat', function(req,res){
 	userId = req.session.userId;
 	uname = req.session.username;
+	console.log(req.body.otherId + " : " + req.body.otherUname)
 	res.render('pages/chat', {
 		userId:  userId,
-		uname: uname
+		uname: uname,
+		otherId: req.body.otherId,
+		otherUname: req.body.otherUname
 	});
 });
 
