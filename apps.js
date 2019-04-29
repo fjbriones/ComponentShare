@@ -335,8 +335,10 @@ app.get('/addreq', function(req, res) {
 })
 app.get('/chat', function(req,res){
 	userId = req.session.userId;
+	uname = req.session.username;
 	res.render('pages/chat', {
-		userId:  userId
+		userId:  userId,
+		uname: uname
 	});
 });
 
