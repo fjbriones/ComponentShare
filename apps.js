@@ -335,8 +335,7 @@ app.get('/addreq', function(req, res) {
 })
 app.get('/chat', function(req,res){
 	userId = req.session.userId;
-	res.render('pages/chat'
-	res.render('pages/home', {
+	res.render('pages/chat', {
 		userId:  userId
 	});
 });
@@ -563,7 +562,7 @@ io.on("connection", function(client){
 						throw err;
 					}else{
 						request = result1[0].user_id;
-						client.emit("matchid", owner_id, request_id);
+						client.emit("matchid", {own_id:  owner_id, req_id: request_id });
 					}
 				});
 			}
