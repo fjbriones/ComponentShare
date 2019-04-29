@@ -848,6 +848,12 @@ ul li:hover {
   margin: 0px;
 }
 
+.badge-notify{
+   background:red;
+   position:relative;
+   float: right;
+   top: -25px;
+}
 
 
 /*

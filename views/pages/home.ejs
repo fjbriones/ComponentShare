@@ -43,7 +43,28 @@
 			setTimeout("location.reload(true);",timeoutPeriod);
 		}
 
-		window.onload = timedRefresh(60000);
+		window.onload = timedRefresh(15000);
+
+		var matches = <%- matches %>;
+		var userId = parseInt(<%= userId %>);
+
+		var notifcolor = "#0b6623"
+
+		$(document).ready(function() {
+			matches.forEach(function(value, index) {
+				if (value.inv_profile_id == userId) {
+					console.log("Inventory match of " + value.inv_id);
+					$('#invbutton'+value.inv_id).css("background-color", notifcolor);
+				}
+				if (value.req_profile_id == userId) {
+					console.log("Request match of " + value.req_id);
+					$('#reqbutton'+value.req_id).css("background-color", notifcolor);
+					$('#reqbutton'+value.req_id).parents("div").siblings("button").css("background-color", notifcolor);
+				}
+			})
+		})
+		
+
 	</script>
 
 </head>
@@ -78,13 +99,13 @@
 			
 							<li>
 								<div>
-									<form id="request<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
+									<form id="inventory<%= inv.inv_id %>" method="post" action="/deleteinventory"></form>
 								</div>
-								<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="request<%= inv.inv_id %>"/>
+								<input type="hidden" id="inv_id" name="inv_id" value="<%= inv.inv_id %>" form="inventory<%= inv.inv_id %>"/>
 								<% inv.remarks.forEach(function(remark, index) { %>
 									<% if (index == 0) { %>
-										<button class="collapsible" data-toggle="collapse" data-target="#collapseinv<%= inv.inv_id %>"><%= remark %> <%= inv.item %></button>
-										<span class="close" onClick="request<%= inv.inv_id %>.submit()">&times;</span>
+										<button id="invbutton<%= inv.inv_id %>" class="collapsible" data-toggle="collapse" data-target="#collapseinv<%= inv.inv_id %>"><%= remark %> <%= inv.item %></button>
+										<span class="close" onClick="inventory<%= inv.inv_id %>.submit()">&times;</span>
 										<div id="collapseinv<%= inv.inv_id %>" class="collapse">
 											Quantity: <%= inv.quantity %> <br>
 									<% } else { %>
@@ -150,7 +171,7 @@
 							<div>
 							<% req.remarks.forEach(function(remark, index) { %>
 								<% if (index == 0) { %> 			
-									<button class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= remark %> <%= req.item %></button>
+									<button id="reqbutton<%= req.req_id %>" class="collapsible" data-toggle="collapse" data-target="#collapsereq<%= req.req_id %>"><%= remark %> <%= req.item %></button>
 									<span class="close" onClick="request<%= req.req_id %>.submit()">&times;</span>
 									<div id="collapsereq<%= req.req_id %>" class="collapse">
 										Quantity: <%= req.quantity %> <br>
