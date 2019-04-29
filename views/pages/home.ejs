@@ -13,7 +13,12 @@
 		window.onload = timedRefresh(15000);
 
 		var matches = <%- matches %>;
+		var profiles = <%- profiles %>
 		var userId = parseInt(<%= userId %>);
+		var otherId;
+		var otherName;
+
+		console.log(profiles)
 
 		var notifcolor = "#0b6623"
 
@@ -22,12 +27,43 @@
 				if (value.inv_profile_id == userId) {
 					console.log("Inventory match of " + value.inv_id);
 					$('#invbutton'+value.inv_id).css("background-color", notifcolor);
+					otherId = value.req_profile_id;
 				}
 				if (value.req_profile_id == userId) {
 					console.log("Request match of " + value.req_id);
 					$('#reqbutton'+value.req_id).css("background-color", notifcolor);
 					$('#reqbutton'+value.req_id).parents("div").siblings("button").css("background-color", notifcolor);
+					otherId = value.inv_profile_id;
 				}
+
+				profiles.forEach(function(value2, index2) {
+					if (value2.profile_id == otherId) {
+						otherName = value2.uname
+					}
+				})
+
+				console.log(value.match_id)
+				$("#matchedList").append($('<div>', {
+					id: "sidediv" + value.match_id
+				}))
+				$("#matchedList").append($('<form>', {
+					id: "chatform" + value.match_id,
+					action: "/chat",
+					method: "get" 
+				}))
+				$("#sidediv"+value.match_id).append($("<input>", {
+					type: "hidden",
+					form: "chatform" + value.match_id,
+					value: otherId,
+					name: "otherId"
+				}))
+				$("#sidediv"+value.match_id).append($("<button>", {
+					class: "btn btn-outline-primary btn-block",
+					form: "chatform" + value.match_id,
+					type: "submit"
+					text: otherName,
+					name: "otherUname"
+				}))
 			})
 		})
 		
