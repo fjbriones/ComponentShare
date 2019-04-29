@@ -12,21 +12,21 @@
 		var socket = io.connect('http://10.158.3.101:3000');
 		// var socket = io.connect('http://localhost:3000');
 		//check if current user is received **to be removed in the future
-		socket.on('user', function(data){
-			$("#notifs").append('<li>Connecting</li>');
-			console.log("user received");
-			console.log(<%= userId %>)
-			var userId = <%= userId %>;
+		// socket.on('user', function(data){
+		// 	$("#notifs").append('<li>Connecting</li>');
+		// 	console.log("user received");
+		// 	console.log(<%= username %>)
+		// 	var userId = <%= userId %>;
 
-		});
+		// });
 
 		//connect user and create redis channel
 		socket.on('connected', function(){
 			var msg = "Push notification enabled";
 			$("#notifs").append('<li>' + msg+'</li>');
 			console.log(msg);
-			console.log(<%= userId %>)
-			socket.emit('join', <%= userId %>);
+			console.log("username is" + <%= username %>)
+			socket.emit('join', <%= username %>);
 
 		});
 
