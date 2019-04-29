@@ -11,14 +11,15 @@
 			var socket = io.connect('http://10.158.3.101:3000');
 			var myID = 0;
 			var hisID = 0;
-			var curUserId = "<%= userId %>";
-			//on page load emit mathced string to enable chat
-
-			socket.on("matchid", function(data){
+			var curUserId = <%= userId %>;
+		socket.on("matchid", function(data){
 				console.log(curUserId);
 				console.log("id1: " +data.own_id);
 				console.log("id2: " +data.req_id);
 				if(data == curUserId){
+				console.log(data.own_id);
+				console.log(data.req_id);
+				if(data == <%= userId %>){
 					$("#user_id").val(data.own_id);
 					$("#username").val(data.own_id);
 					$("#user_to").val(data.req_id);
