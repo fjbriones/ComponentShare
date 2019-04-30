@@ -364,7 +364,7 @@ app.get('/chat', function(req,res){
 		uname: uname,
 		otherId: req.query["otherId"],
 		otherUname: req.query["otherUname"],
-		component: req.query["component"]
+		matched_comp: req.query["component"]
 	});
 });
 
