@@ -353,15 +353,17 @@ app.get('/addinv', function(req, res) {
 app.get('/addreq', function(req, res) {
 	res.render('pages/addreq');
 })
-app.post('/chat', function(req,res){
+app.get('/chat', function(req,res){
 	userId = req.session.userId;
 	uname = req.session.username;
-	console.log("Going to chat with " + req.body["otherId"] + " : " + req.body["otherUname"])
+	// console.log(req)
+	console.log("Going to chat with " + req.query["otherId"] + " : " + req.query["otherUname"] + " for " + req.query["component"])
 	res.render('pages/chat', {
 		userId:  userId,
 		uname: uname,
-		otherId: req.body["otherId"],
-		otherUname: req.body["otherUname"]
+		otherId: req.query["otherId"],
+		otherUname: req.query["otherUname"],
+		component: req.query["component"]
 	});
 });
 
@@ -656,6 +658,30 @@ io.on("connection", function(client){
 			client.emit("typing", data);
 			client.broadcast.emit('typing', data);
 		}
+	});
+
+	client.on('loaddb', function(data){
+		var msgquery = "SELECT * FROM messages WHERE user_from = '"+data.user_id+"' AND user_to = '"+data.user_to+"'";
+		var data = [];
+		db.query(msgquery, function(err, result, fields){
+			if (err) throw err
+			else {
+				result.forEach(function(value, index, array) {
+					var item = {
+						user_id : value.user_from,
+						username : value.user_from,
+						user_to : value.user_to,
+						message : value.message
+					}
+					console.log(item)
+					data.push(item)
+					if (array.length == index + 1){
+						console.log("here")
+						client.emit("thread", data)
+					}
+				})
+			}
+		})
 	});
 });
 	
