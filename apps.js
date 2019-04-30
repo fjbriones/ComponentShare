@@ -359,6 +359,7 @@ app.get('/chat', function(req,res){
 	// console.log(req)
 	console.log("Going to chat with " + req.query["otherId"] + " : " + req.query["otherUname"] + " for " + req.query["component"])
 	res.render('pages/chat', {
+		username: uname,
 		userId:  userId,
 		uname: uname,
 		otherId: req.query["otherId"],
