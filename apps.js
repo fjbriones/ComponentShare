@@ -679,7 +679,7 @@ io.on("connection", function(client){
 					data.push(item);
 					//if (array.length == index + 1){
 						client.emit("threadload", item)
-						client.broadcast.emit("threadload", item);
+						//client.broadcast.emit("threadload", item);
 					//}
 				})
 			}
