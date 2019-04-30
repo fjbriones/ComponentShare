@@ -675,11 +675,11 @@ io.on("connection", function(client){
 						user_to : value.user_to,
 						message : value.message
 					}
-					console.log(item)
-					data.push(item)
+					console.log(item);
+					data.push(item);
 					//if (array.length == index + 1){
-						client.emit("threadload", data)
-						client.broadcast.emit("threadload", data);
+						client.emit("threadload", item)
+						client.broadcast.emit("threadload", item);
 					//}
 				})
 			}
