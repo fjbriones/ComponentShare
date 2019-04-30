@@ -754,6 +754,52 @@ app.get('/profile', function(req, res) {
 	res.render('pages/profile')
 })
 
+app.get('/reqcomp', function(req, res) {
+	res.render('pages/reqcomp')
+})
+
+app.post('/reqcomp', function(req, res) {
+	var userId = req.session.userId;
+	var username = req.session.username;
+	var type = req.body["new_type"];
+	var component = req.body["new_component"]
+	var value = req.body["new_value"]
+	var datasheet = req.body["new_datasheet"]
+	var description = req.body["new_description"]
+	var others = req.body["new_others"]
+
+	var mailText = "Greetings admin,<br><br><br>"
+	mailText += username + " is requesting for a new component with the following parameters: <br><br>"
+	mailText += "<table style='width:100%'>"
+	mailText += "<tr><th>Type</th>"
+	mailText += "<td>" + type + "</td></tr>"
+	mailText += "<tr><th>Component</th>"
+	mailText += "<td>" + component + "</td></tr>"
+	mailText += "<tr><th>Value</th>"
+	mailText += "<td>" + value + "</td></tr>"
+	mailText += "<tr><th>datasheet</th>"
+	mailText += "<td>" + datasheet + "</td></tr>"
+	mailText += "<tr><th>description</th>"
+	mailText += "<td>" + description + "</td></tr>"
+	mailText += "<tr><th>Others</th>"
+	mailText += "<td>" + others + "</td></tr>"
+	mailText += "</table>"
+
+	var mailOptions = {
+		from : 'componentshare@gmail.com',
+		to : 'ferdinand.john.briones@eee.upd.edu.ph',
+		subject : 'Request for additional components',
+		html: mailText
+	}
+	transporter.sendMail(mailOptions, function(err3, info) {
+		if (err3) throw err3;
+		console.log('Email sent to '+ email + ': ' + info.response)
+	})
+
+	res.redirect('/home')
+
+})
+
 // app.get('/chat', function(req, res) {
 // 	res.render('pages/chat')
 // })
