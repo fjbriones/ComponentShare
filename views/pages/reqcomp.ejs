@@ -1,0 +1,42 @@
+<!-- https://speckyboy.com/login-pages-html5-css/ -->
+<!-- 3. Pure HTML5 -->
+
+<!DOCTYPE html>
+<html lang="en"> 
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+
+<body>
+
+<div class="container">
+    <section id="content">
+       <form action="/home" method="post" id="newcompForm"/>
+            <h1>Request New Component</h1>
+            <div>
+                <input type="text" placeholder="Component Type (Resistor/ Inductor/ IC/ etc)" name="new_type" required="" id="new_type" form="newcompForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Component Name" name="new_component" required="" id="new_component" form="newcompForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Component Value" name="new_value"id="new_value" form="newcompForm"/>
+            </div>
+            <div>
+                <input type="text" placeholder="Datasheet Link" name="new_datasheet" id="new_datasheet" form="newcompForm"/>
+            </div>
+           <div>
+                <input type="text" placeholder="Description" name="new_description" id="new_description" form="newcompForm"/>
+            </div>
+            <div>
+                <textarea placeholder="Other Info" name="new_others" id="new_others" form="newcompForm"/></textarea>
+            </div>
+            <div>
+                <input type="submit" value="Request" form="newcompForm"/>
+            </div>
+    </section><!-- content -->
+</div><!-- container -->
+</body>
+</html>

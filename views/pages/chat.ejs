@@ -8,18 +8,32 @@
 
 	</head>
 	<body>
+		<% include ../partials/side %>
+		<form id="logout" method="get" action="/logout"></form>
+		<div>
+			<h6 align="right"> Hi, <%= username %>
+			<input type="submit" id="logout" value="Logout" form="logout" />
+			</h6>
+		</div>
+
 		<input type="hidden" id="userId">
 		<input type="hidden" id="user_id" placeholder="myID"><input id="user_to" type="hidden" placeholder="hisID"><br/>
 		<input id="username" type="hidden" placeholder="my name">
-		<h1> Chat! </h1>
-		<form>
-			<input id = "message" type="text" placeholder="message">
-			<input type="button" id="send" value="Send">
-		</form>
-
-		<div class="container">
+		
+		<h3 align="center">Matched <%= matched_comp %> with <%= matched_user %></h3>
+		
+		<div class="container3">
 			<ul id="typing"></ul>
-			<ul id="thread"></ul>
+			<ul class="chat-peer" id="thread"></ul>
+		</div>
+
+		<div class="container2">
+			<div class="form-chat" id="myForm">
+				<form>
+					<textarea placeholder="Type message.." id = "message"></textarea>
+					<button type="submit" class="btn" id="send">Send</button>
+				</form>
+			</div>
 		</div>
 
 		 <script>
@@ -59,7 +73,6 @@
 					$("#thread").append("<li><b>" +data.username+ "</b> : " + data.message + "</li>");
 				}
 			});
-
 			//Show "typing..." message
 			socket.on("typing", function(data){
 				if(data.user_to == myID && data.user_id ==hisID){
@@ -70,7 +83,6 @@
 					}
 				}
 			});
-
 			//emit form contents to socket
 			$("#send").click(function(){
 				console.log('pressed');
@@ -78,7 +90,6 @@
 				var username = $("#username").val();
 				var user_to = $("#user_to").val();
 				var message = $("#message").val();
-
 				var msg = {
 					user_id : user_id,
 					username : username,
@@ -90,7 +101,6 @@
 				$("#message").val(" ");
 				return false;
 			});
-
 			var timeout;
 			function timeoutFunction(){
 				var typo = {
@@ -100,7 +110,6 @@
 				}
 				socket.emit("is_typing", typo);
 			}
-
 			$("#message").keypress(function(e){
 				if(e.which !== 13){
 					var typo = {
@@ -111,13 +120,12 @@
 					socket.emit("is_typing", typo);
 					clearTimeout(timeout);
 					timeout = setTimeout(function() {}, 2000);
-
 				}else{
 					clearTimeout(timeout);
 					timeoutFunction();
 				}
 			});
-
    		 </script>
 	</body>
-	</html>
+</html>
+

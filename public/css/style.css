@@ -51,7 +51,6 @@ form:after {
     visibility: hidden;
 }
 .container { margin: 25px auto; position: relative; width: 900px; }
-.col {margin: 25px;}
 #content {
     background: #f9f9f9;
     background: -moz-linear-gradient(top,  rgba(248,248,248,1) 0%, rgba(249,249,249,1) 100%);
@@ -322,7 +321,7 @@ form:after {
   width: 0;
   position: fixed;
   z-index: 1;
-  /*height: 500px;*/
+  height: 100%;
   top: 0;
   left: 0;
   background-color: #111;
@@ -358,6 +357,7 @@ form:after {
   color: white;
   padding: 10px 15px;
   border: none;
+  float: left
 }
 
 .openbtn:hover {
@@ -378,9 +378,9 @@ ul {
 
 ul li {
   border: 1px solid #ddd;
-  margin-top: -1px;  /*Prevent double borders */
+  margin-top: -1px; /* Prevent double borders */
   background-color: #c4c4c4;
-  /*padding: 12px;*/
+  padding: 12px;
   text-decoration: none;
   font-size: 18px;
   color: black;
@@ -627,15 +627,18 @@ ul li:hover {
   margin: 10px 0;
 
   position: relative;
-  left: 275px;
-  width: 700px;
+  /*left: 275px;
+  width: 700px;*/
+
+  right: -10px;
+  width: 900px;
 
 }
 
 /* Darker chat container */
 .chat-peer {
   border-color: #ccc;
-  background-color: #ccc;
+  background-color: #bbb;
 
   border-radius: 5px;
   padding: 10px;
@@ -643,7 +646,7 @@ ul li:hover {
 
   position: relative;
   right: -10px;
-  width: 700px;
+  width: 950px;
 }
 
 .form-chat {
@@ -806,7 +809,9 @@ ul li:hover {
 
 /* end of collapsibles */
 
-#content form textarea{
+/* form text area */
+#content form textarea,
+#content form input[type="textarea"]{
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -ms-border-radius: 3px;
@@ -831,7 +836,8 @@ ul li:hover {
     width: 80%;
     height: 100px;
 }
-#content form textarea:focus{
+#content form textarea:focus
+#content form input[type="textarea"]:focus{
     -webkit-box-shadow: 0 0 2px #ed1c24 inset;
     -moz-box-shadow: 0 0 2px #ed1c24 inset;
     -ms-box-shadow: 0 0 2px #ed1c24 inset;
@@ -843,10 +849,7 @@ ul li:hover {
 }
 /* end of form text area */
 
-.form-row {
-  padding: 0px;
-  margin: 0px;
-}
+
 
 .badge-notify{
    background:red;
