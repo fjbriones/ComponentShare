@@ -42,13 +42,13 @@
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
-			var uname = "<%= uname %>";
+			var curUname = "<%= uname %>";
 			socket.on("matchid", function(data){
 				console.log(curUserId);
 				console.log(uname);
 				console.log("owner id: " + data.own_id);
 				console.log("req id: " + data.req_id);
-				if(data.own_id == curUserId){
+				if(data.own_id == curUname){
 					$("#user_id").val(data.own_id);
 					$("#username").val(uname);
 					$("#user_to").val(data.req_id);

@@ -626,19 +626,19 @@ io.on("connection", function(client){
 	//code block for chat sequence - ** needs to be separated from push notification connection
 	var owner_id;
 	var request_id;
-	var sql_com_owner = "SELECT user_id FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
-	var sql_com_searcher =  "SELECT user_id FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
+	var sql_com_owner = "SELECT uname FROM usrlogin,matches WHERE usrlogin.user_id = matches.inv_profile_id";
+	var sql_com_searcher =  "SELECT uname FROM usrlogin,matches WHERE  usrlogin.user_id = matches.req_profile_id";
 	mysql_con.query(sql_com_owner, function(err,result, fields){
 		if(err){
 			throw err;
 		}else{
 			if (result.length > 0) {
-				owner_id = result[0].user_id;
+				owner_id = result[0].uname;
 				mysql_con.query(sql_com_searcher, function(err,result1, fields){
 					if(err){
 						throw err;
 					}else{
-						request_id = result1[0].user_id;
+						request_id = result1[0].uname;
 						client.emit("matchid", {own_id:  owner_id, req_id: request_id });
 					}
 				});
