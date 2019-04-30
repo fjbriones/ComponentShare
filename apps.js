@@ -663,7 +663,7 @@ io.on("connection", function(client){
 	});
 
 	client.on('loaddb', function(data){
-		var msgquery = "SELECT * FROM messages WHERE user_from = '"+data.user_id+"' AND user_to = '"+data.user_to+"'";
+		var msgquery = "SELECT * FROM messages WHERE (user_from = '"+data.user_id+"' AND user_to = '"+data.user_to+"') OR (user_from = '"+data.user_to+"' AND user_to = '"+data.user_id+"')";
 		var data = [];
 		db.query(msgquery, function(err, result, fields){
 			if (err) throw err
