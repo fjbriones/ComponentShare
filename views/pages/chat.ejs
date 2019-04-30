@@ -66,11 +66,13 @@
 			});
 
 			socket.on("thread", function(data) {
-				console.log("thread received");
+				console.log(data);
 				$("#typing").html("");
 				if(data.user_to == myID && data.user_id == hisID){
+					console.log("if");
 					$("#thread").append("<li><b>" +data.username+ "</b> : " + data.message + "</li>");
 				} else if (data.user_id == myID && data.user_to == hisID) {
+					console.log("elseif");
 					$("#thread").append("<li><b>" +data.username+ "</b> : " + data.message + "</li>");
 				}
 			});

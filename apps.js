@@ -678,7 +678,6 @@ io.on("connection", function(client){
 					console.log(item)
 					data.push(item)
 					if (array.length == index + 1){
-						console.log("here")
 						client.emit("thread", data)
 						client.broadcast.emit("thread", data);
 					}
