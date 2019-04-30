@@ -45,18 +45,18 @@
 			var curUname = "<%= uname %>";
 			socket.on("matchid", function(data){
 				console.log(curUserId);
-				console.log(uname);
+				console.log(curUname);
 				console.log("owner id: " + data.own_id);
 				console.log("req id: " + data.req_id);
 				if(data.own_id == curUname){
 					$("#user_id").val(data.own_id);
-					$("#username").val(uname);
+					$("#username").val(curuname);
 					$("#user_to").val(data.req_id);
 					myID = data.own_id;	
 					hisID = data.req_id;
 				}else{
 					$("#user_id").val(data.req_id);
-					$("#username").val(uname);
+					$("#username").val(curUname);
 					$("#user_to").val(data.own_id);
 					hisID = data.own_id;
 					myID = data.req_id;
