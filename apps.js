@@ -677,10 +677,10 @@ io.on("connection", function(client){
 					}
 					console.log(item)
 					data.push(item)
-					if (array.length == index + 1){
-						client.emit("thread", data)
-						client.broadcast.emit("thread", data);
-					}
+					//if (array.length == index + 1){
+						client.emit("threadload", data)
+						client.broadcast.emit("threadload", data);
+					//}
 				})
 			}
 		})
