@@ -17,6 +17,7 @@
 		var userId = parseInt(<%= userId %>);
 		var otherId;
 		var otherName;
+		var component;
 
 		console.log(profiles)
 
@@ -28,11 +29,13 @@
 					console.log("Inventory match of " + value.inv_id);
 					$('#invbutton'+value.inv_id).css("background-color", notifcolor);
 					otherId = value.req_profile_id;
+					component = $("#invbutton"+value.inv_id).text()
 				}
 				if (value.req_profile_id == userId) {
 					console.log("Request match of " + value.req_id);
 					$('#reqbutton'+value.req_id).css("background-color", notifcolor);
 					$('#reqbutton'+value.req_id).parents("div").siblings("button").css("background-color", notifcolor);
+					component = $('#reqbutton'+value.req_id).text()
 					otherId = value.inv_profile_id;
 				}
 
@@ -50,7 +53,7 @@
 				$("#matchedList").append($('<form>', {
 					id: "chatform" + value.match_id,
 					action: "/chat",
-					method: "post" 
+					method: "get" 
 				}))
 				$("#sidediv"+value.match_id).append($("<input>", {
 					type: "hidden",
@@ -64,6 +67,12 @@
 					value: otherName,
 					name: "otherUname"
 				}))
+				$("#sidediv"+value.match_id).append($("<input>", {
+					type: "hidden",
+					form: "chatform" + value.match_id,
+					value: component,
+					name: "component"
+				}))				
 				$("#sidediv"+value.match_id).append($("<button>", {
 					class: "btn btn-secondary btn-block",
 					form: "chatform" + value.match_id,
