@@ -388,6 +388,19 @@ ul li {
   position: relative;
 }
 
+ul li ul li {
+  margin-left: 10px;
+  margin-top: 1px;
+  margin-right: -1px;
+  background-color: #c4c4c4;
+  /*padding: 12px;*/
+  text-decoration: none;
+  font-size: 18px;
+  color: black;
+  display: block;
+  position: relative;
+}
+
 ul li:hover {
   background-color: #eee;
 }
@@ -838,6 +851,12 @@ ul li:hover {
 
 
 
+.badge-notify{
+   background:red;
+   position:relative;
+   float: right;
+   top: -25px;
+}
 
 
 /*

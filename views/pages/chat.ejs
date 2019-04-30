@@ -36,10 +36,9 @@
 			</div>
 		</div>
 
-
 		 <script>
    		 	//initiate socket connection
-			var socket = io.connect('http://10.158.3.101:3000');
+			var socket = io.connect('http://localhost:3000');
 			var myID = 0;
 			var hisID = 0;
 			var curUserId = <%= userId %>;
@@ -63,7 +62,9 @@
 					myID = data.req_id;
 				}
 				
+				socket.emit("loaddb", {user_id: myID, user_to: hisID});
 			});
+
 			socket.on("thread", function(data) {
 				$("#typing").html("");
 				if(data.user_to == myID && data.user_id == hisID){
@@ -127,3 +128,4 @@
    		 </script>
 	</body>
 </html>
+
