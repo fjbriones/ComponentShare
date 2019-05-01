@@ -622,7 +622,7 @@ app.post('/addinv', async function(req, res) {
 io.on("connection", function(client){ 
 	//push notification function
 	console.log("User connected " + client.id);
-
+	var id;
 	//code block for chat sequence - ** needs to be separated from push notification connection
 	var owner_id;
 	var request_id;
@@ -632,18 +632,33 @@ io.on("connection", function(client){
 		if(err){
 			throw err;
 		}else{
-			if (result.length > 0) {
-				owner_id = result[0].uname;
-				mysql_con.query(sql_com_searcher, function(err,result1, fields){
-					if(err){
-						throw err;
-					}else{
-						request_id = result1[0].uname;
-						client.emit("matchid", {own_id:  owner_id, req_id: request_id });
-					}
-				});
+			result.forEach(function(value, index, array){
+				var item = {
+					owner_id: value.uname
+				};
+				id.push(item);
+				if(array.length == index + 1){
+					mysql_con.query(sql_com_searcher, function(err,result1, fields){
+						if(err){
+							throw err;
+						}else{
+							result1.forEach(function(value1, index1, array1){
+								var item2 = {
+									request_id: value1.uname
+								};
+								id.push(item2);
+								if(array1.length == index1 + 1){
+									console.log(id);
+									client.emit("matchid", id);
+								}
+							})
+							//request_id = result1[0].uname	
+						}
+					});
+				}
+			})
+				//owner_id = result[0].uname;	
 			}
-		}
 	});
 	client.on("messages", function(data){
 		client.emit("thread", data);
@@ -685,6 +700,8 @@ io.on("connection", function(client){
 			}
 		})
 	});
+
+
 });
 	
 
