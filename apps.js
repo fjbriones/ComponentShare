@@ -622,7 +622,7 @@ app.post('/addinv', async function(req, res) {
 io.on("connection", function(client){ 
 	//push notification function
 	console.log("User connected " + client.id);
-	var id;
+	var id = [];
 	//code block for chat sequence - ** needs to be separated from push notification connection
 	var owner_id;
 	var request_id;
@@ -635,7 +635,7 @@ io.on("connection", function(client){
 			result.forEach(function(value, index, array){
 				var item = {
 					owner_id: value.uname
-				};
+				}
 				id.push(item);
 				if(array.length == index + 1){
 					mysql_con.query(sql_com_searcher, function(err,result1, fields){
