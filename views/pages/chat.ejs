@@ -43,11 +43,20 @@
 			var hisID = 0;
 			var curUserId = <%= userId %>;
 			var curUname = "<%= uname %>";
+			var otherUname = "<%= otherUname %>";
+
 			socket.on("matchid", function(data){
-				console.log(curUserId);
-				console.log(curUname);
-				console.log("owner id: " + data.own_id);
-				console.log("req id: " + data.req_id);
+				console.log("Other: " +otherUname);
+				console.log("Current: " + curUname);
+				data.forEach(function(value, index, array){
+					console.log("Value.ownerid: " + value.owner_id);
+					console.log("Value.reqid: "+ value.request_id);
+					if(array.length == index + 1){
+						Console.log("User not found");
+					}
+				})
+				//console.log("owner id: " + data.own_id);
+				//console.log("req id: " + data.req_id);
 				if(data.own_id == curUname){
 					$("#user_id").val(data.own_id);
 					$("#username").val(data.own_id);
