@@ -48,61 +48,14 @@
 			var selOtherUname;
 			socket.on("matchid", function(data){
 				console.log("Other: " +otherUname);
-				console.log("Current: " + curUname);
-				// data.forEach(function(value, index, array){
-				// 	console.log("Value.ownerid[" + index +"]: " + value.owner_id);
-				// 	if(value.owner_id == curUname){
-				// 		selCurUname = value.owner_id;
-				// 		data.forEach(function(value1, index1, array1){ 
-				// 			console.log("1 Value.reqid["+index1+"]: " + value1.request_id);
-				// 			if(value1.request_id == otherUname){
-				// 				selOtherUname = value1.request_id;
-				// 				if(array1.length == index1 + 1){
-				// 					console.log("User not found!");
-				// 				}
-				// 			}
-								
-				// 		})
-
-				// 	}else if(value.owner_id == otherUname){
-				// 		selOtherUname = value.owner_id;
-				// 		data.forEach(function(value1, index1, array1){
-				// 			console.log("2 Value.reqid["+index1+"]: " + value1.request_id);
-				// 			if(value1.request_id == curUname){
-				// 				selCurUname = value1.request_id;
-				// 				if(array1.length == index + 1){
-				// 					console.log("User not found!");
-				// 				}
-				// 			}
-
-				// 		})
-						
-				// 	}else{
-				// 		console.log("User not found!")
-				// 	}
-				// })
-				//console.log("owner id: " + data.own_id);
-				//console.log("req id: " + data.req_id);
+				console.log("Current: " + curUname)
 				$("#user_id").val(curUname);
 				$("#username").val(curUname);
 				$("#user_to").val(otherUname);
 				myID = curUname;	
 				hisID = otherUname;
 
-				// if(selCurUname == curUname){
-				// 	$("#user_id").val(selCurUname);
-				// 	$("#username").val(selCurUname);
-				// 	$("#user_to").val(selOtherUname);
-				// 	myID = selCurUname;	
-				// 	hisID = data.req_id;
-				// }else{
-				// 	$("#user_id").val(data.req_id);
-				// 	$("#username").val(data.req_id);
-				// 	$("#user_to").val(data.own_id);
-				// 	hisID = data.own_id;
-				// 	myID = data.req_id;
-				// }
-				
+
 				socket.emit("loaddb", {user_id: myID, user_to: hisID});
 			});
 
