@@ -648,17 +648,14 @@ io.on("connection", function(client){
 								};
 								id.push(item2);
 								if(array1.length == index1 + 1){
-									console.log(id);
 									client.emit("matchid", id);
 								}
 							})
-							//request_id = result1[0].uname	
 						}
 					});
 				}
 			})
-				//owner_id = result[0].uname;	
-			}
+		}
 	});
 	client.on("messages", function(data){
 		client.emit("thread", data);
@@ -667,7 +664,6 @@ io.on("connection", function(client){
 	});
 
 	client.on('is_typing', function(data){
-		//console.log(data);
 		if(data.status === true){
 			client.emit("typing", data);
 			client.broadcast.emit('typing', data);
@@ -690,12 +686,7 @@ io.on("connection", function(client){
 						user_to : value.user_to,
 						message : value.message
 					}
-					console.log(item);
-					data.push(item);
-					//if (array.length == index + 1){
-						client.emit("threadload", item)
-						//client.broadcast.emit("threadload", item);
-					//}
+					client.emit("threadload", item)
 				})
 			}
 		})
