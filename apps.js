@@ -193,21 +193,21 @@ app.get('/home', function(req, res){
 			inventory = result;
 		}
 		mysql_con.query(sql_com_request, function(err2, result2, fields2){
-			if (err) {
+			if (err2) {
 				request = [];
 			}
 			else {
 				request = result2;
 			}
 			mysql_con.query(sql_com_feed, function(err3, result3, fields3){
-				if (err) {
+				if (err3) {
 					feed = [];
 				}
 				else {
 					feed = result3;
 				}
 				mysql_con.query(sql_com_match, function(err4, result4, fields4){
-					if(err) {
+					if(err4) {
 						matches = [];
 					}
 					else {
@@ -362,12 +362,12 @@ app.get('/chat', function(req,res){
 
 	var matches;
 
-	mysql_con.query(sql_com_match, function(err4, result4, fields4){
+	mysql_con.query(sql_com_match, function(err, result, fields){
 		if(err) {
 			matches = [];
 		}
 		else {
-			matches = result4;
+			matches = result;
 		
 			console.log("Going to chat with " + req.query["otherId"] + " : " + req.query["otherUname"] + " for " + req.query["component"])
 			res.render('pages/chat', {
