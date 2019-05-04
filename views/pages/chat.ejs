@@ -3,8 +3,73 @@
 		<title>Chat</title>
 		<meta name = "viewport" content="width = device-width, initial-scale = 1"/>
 		<link rel="stylesheet" href="css/style.css"/>
-		 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-   		 <script src="/socket.io/socket.io.js"  type="text/javascript"></script>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+   		<script src="/socket.io/socket.io.js"  type="text/javascript"></script>
+
+   		<script type="text/javascript">
+   			var matches = <%- matches %>;
+			var profiles = <%- profiles %>;
+			var userId = parseInt(<%= userId %>);
+			var otherId;
+			var otherName;
+			var component;
+
+			var notifcolor = "#0b6623"
+
+			$(document).ready(function() {
+				matches.forEach(function(value, index) {
+					if (value.inv_profile_id == userId) {
+						otherId = value.req_profile_id;
+						component = $("#invbutton"+value.inv_id).text()
+					}
+					if (value.req_profile_id == userId) {
+						component = $('#reqbutton'+value.req_id).text()
+						otherId = value.inv_profile_id;
+					}
+
+					profiles.forEach(function(value2, index2) {
+						if (value2.profile_id == otherId) {
+							otherName = value2.uname
+						}
+					})
+
+					console.log(value.match_id)
+					$("#matchedList").append($('<div>', {
+						class: "card3",
+						id: "sidediv" + value.match_id
+					}))
+					$("#matchedList").append($('<form>', {
+						id: "chatform" + value.match_id,
+						action: "/chat",
+						method: "get" 
+					}))
+					$("#sidediv"+value.match_id).append($("<input>", {
+						type: "hidden",
+						form: "chatform" + value.match_id,
+						value: otherId,
+						name: "otherId"
+					}))
+					$("#sidediv"+value.match_id).append($("<input>", {
+						type: "hidden",
+						form: "chatform" + value.match_id,
+						value: otherName,
+						name: "otherUname"
+					}))
+					$("#sidediv"+value.match_id).append($("<input>", {
+						type: "hidden",
+						form: "chatform" + value.match_id,
+						value: component,
+						name: "component"
+					}))				
+					$("#sidediv"+value.match_id).append($("<button>", {
+						class: "btn btn-secondary btn-block",
+						form: "chatform" + value.match_id,
+						type: "submit",
+						text: otherName
+					}))
+				})
+			})
+   		</script>
 
 	</head>
 	<body>
