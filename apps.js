@@ -357,15 +357,29 @@ app.get('/chat', function(req,res){
 	userId = req.session.userId;
 	uname = req.session.username;
 	// console.log(req)
-	console.log("Going to chat with " + req.query["otherId"] + " : " + req.query["otherUname"] + " for " + req.query["component"])
-	res.render('pages/chat', {
-		username: uname,
-		userId:  userId,
-		uname: uname,
-		otherId: req.query["otherId"],
-		otherUname: req.query["otherUname"],
-		matched_user: req.query["otherUname"],
-		matched_comp: req.query["component"]
+
+	var sql_com_match = "SELECT * FROM matches WHERE inv_profile_id='"+userId+"' OR req_profile_id='"+userId+"'";
+
+	var matches;
+
+	mysql_con.query(sql_com_match, function(err4, result4, fields4){
+		if(err) {
+			matches = [];
+		}
+		else {
+			matches = result4;
+		
+			console.log("Going to chat with " + req.query["otherId"] + " : " + req.query["otherUname"] + " for " + req.query["component"])
+			res.render('pages/chat', {
+				username: uname,
+				userId:  userId,
+				uname: uname,
+				otherId: req.query["otherId"],
+				otherUname: req.query["otherUname"],
+				matched_user: req.query["otherUname"],
+				matched_comp: req.query["component"]
+			});
+		}
 	});
 });
 
