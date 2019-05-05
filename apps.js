@@ -386,8 +386,8 @@ app.get('/chat', function(req,res){
 						otherUname: req.query["otherUname"],
 						matched_user: req.query["otherUname"],
 						matched_comp: req.query["component"],
-						matches: matches,
-						profiles: profiles
+						matches: JSON.stringify(matches),
+						profiles: JSON.stringify(profiles)
 					});
 				}
 			});
